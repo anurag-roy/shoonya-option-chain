@@ -1,38 +1,101 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
 
-## Getting Started
+# Option Chain
 
-First, run the development server:
+Live Option Chain for Equity Derivatives using Zerodha Kite APIs and Next.js
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+<img width="1412" alt="option-chain" src="https://user-images.githubusercontent.com/53750093/219455211-6384c214-0aae-461b-a020-30f3039794d7.png">
+  
+</div>
+
+## Features
+
+- Grouped stocks for easily monitoring relevant stocks
+- Connect from multiple tabs to monitor different groups of upto 3000 stocks (KiteTicker limit)
+- Vertically resizable and scrollable tables to adjust views when needed
+- Prices displayed - First Bid and First Ask for options and LTP for equities along with change from previous day's close
+- Options displayed
+  - CE: Only Call options with strikes lesser than the LTP
+  - PE: Only Put options with strikes greater than the LTP
+  - A percentage of options close to the LTP on both sides are ignored. See [`DIFF_PERCENT`](#configts)
+
+## Setup
+
+Install dependencies. (npm or yarn is recommended)[^1]
+
+```sh
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Setup environment secrets in an `env.json` file by copying the `example.env.json` file. For further customisation, see [configuration](#configuration).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```sh
+cd src
+cp example.env.json env.json
+# Populate env.json secrets
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Start the app to login for the first time to get and cache your access token. We need to do that before fetching instrument data and setting up the database, because Kite requires you to be authenticated.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```sh
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Now you can close the server and setup your DB.
 
-## Learn More
+```sh
+# After stopping the dev server
+npm run data:prepare
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Start in development mode
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```
+npm run dev
+```
 
-## Deploy on Vercel
+Build and start production server.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```sh
+npm run build
+npm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Configuration
+
+### Port
+
+The default port is `8000`. To change it, update the `dev` and `start` scripts in `package.json`.
+
+### config.ts
+
+Edit `src/config.ts` to:
+
+- `GROUPS` - Update stock dropdown options and relevant grouping
+- `EXPIRY_OPTION_LENGTH` - Expiry dropdown options
+- `DIFF_PERCENT` - Control the range of strikes to ignore (depending on the LTP of the equity instrument).
+
+## Scopes of improvement
+
+There are definitely some optimisations that can be made, but were not made because I did not experience any slowdon or lagging so I don't see a good ROI for the effort it will take. But anyway, just jotting them down if I ever feel tackling on any one:
+
+- Custom ticker parser to parse only `instrument_token`, ltp (for equity) and first bid and first ask (for options). Gist [here](https://gist.github.com/anurag-roy/6df7f3cc6eef6b299a9140aa94c16548).
+- On the frontend, granular update of each instrument object instead of the whole array.
+
+## Related
+
+- [KiteConnect TypeScript Library](https://github.com/anurag-roy/kiteconnect-ts)
+- [5paisa Live Ticker](https://github.com/anurag-roy/5paisa-live-ticker)
+
+## Contact
+
+- [Twitter](https://twitter.com/anurag__roy)
+- [Email](mailto:anuragroy@duck.com)
+
+## License
+
+[MIT © 2023 Anurag Roy](/LICENSE)
+
+[^1]: The app uses this [Next.js plugin](https://www.npmjs.com/package/next-plugin-websocket) to maintain a WebSocket Server, which patches some files in `node_modules`. I have tried using `pnpm` but it does not work reliably. See other caveats [here](https://github.com/sam3d/next-plugin-websocket#caveats).
