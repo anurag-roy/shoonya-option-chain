@@ -1,12 +1,12 @@
-import { UiInstrument } from '@/types/SocketData';
+import { UiInstrument } from '@/types';
 import { displayInr, getMonthName } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import {
   Dispatch,
   Fragment,
-  memo,
   SetStateAction,
+  memo,
   useEffect,
   useState,
 } from 'react';

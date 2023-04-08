@@ -8,17 +8,15 @@ datasource db {
 }
 
 model instrument {
-  id               String @id
-  instrument_token Int
-  exchange_token   String
-  tradingsymbol    String
-  name             String
-  last_price       Float
-  expiry           String
-  strike           Float
-  tick_size        Float
-  lot_size         Float
-  instrument_type  String
-  segment          String
-  exchange         String
+  id            String @id
+  exchange      String
+  token         String
+  lotSize       Float
+  symbol        String
+  tradingSymbol String
+  expiry        String
+  instrument    String
+  optionType    String
+  strikePrice   Float
+  tickSize      String
 }

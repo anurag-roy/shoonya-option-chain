@@ -1,6 +1,6 @@
 import { DIFF_PERCENT } from '@/config';
 import { clients, kc, kt, tokenMap } from '@/globals';
-import { UiInstrument } from '@/types/SocketData';
+import { UiInstrument } from '@/types';
 import { getInstrumentsToSubscribe } from '@/utils/db';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';

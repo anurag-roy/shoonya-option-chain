@@ -11,10 +11,10 @@
   "dependencies": {
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.17",
-    "@next/font": "^13.3.0",
     "@prisma/client": "^4.12.0",
     "@tailwindcss/forms": "^0.5.3",
     "better-sqlite3": "^8.2.0",
+    "jszip": "^3.10.1",
     "kiteconnect-ts": "^0.4.5",
     "lodash.startcase": "^4.4.0",
     "next": "^13.3.0",

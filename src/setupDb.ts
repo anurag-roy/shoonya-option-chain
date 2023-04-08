@@ -1,25 +1,15 @@
 import { getKeys } from '@/utils/ui';
 import Database from 'better-sqlite3';
-import { GROUPS } from './config';
-import { kc } from './globals';
+import { getInstruments } from './utils/api';
 
-const allowedStocks = Object.values(GROUPS).flatMap((s) => s);
-
-const getSqliteType = (key: string, value: any) => {
-  if (key === 'instrument_token') return 'INTEGER';
-  else return typeof value === 'number' ? 'REAL' : 'TEXT';
-};
+const getSqliteType = (key: string, value: any) =>
+  typeof value === 'number' ? 'REAL' : 'TEXT';
 
 async function main() {
-  const nseInstruments = await kc.getInstruments(['NSE']);
-  const nfoInstruments = await kc.getInstruments(['NFO']);
+  const nseInstruments = await getInstruments('NSE');
+  const nfoInstruments = await getInstruments('NFO');
 
-  const instruments = [
-    ...nseInstruments.filter((i) => allowedStocks.includes(i.tradingsymbol)),
-    ...nfoInstruments.filter(
-      (i) => allowedStocks.includes(i.name) && i.segment === 'NFO-OPT'
-    ),
-  ];
+  const instruments = [...nseInstruments, ...nfoInstruments];
 
   const columns = getKeys(instruments[0]);
 
@@ -33,9 +23,9 @@ async function main() {
   db.prepare(
     `CREATE TABLE ${TABLE_NAME} (` +
       'id TEXT NOT NULL PRIMARY KEY,' +
-      columns
-        .map((c) => `${c} ${getSqliteType(c, instruments[0][c])} NOT NULL`)
-        .join(',') +
+      columns.map(
+        (c) => `${c} ${getSqliteType(c, instruments[0][c])} NOT NULL`
+      ) +
       ');'
   ).run();
   console.log('Table creation successful!');
@@ -58,15 +48,10 @@ async function main() {
     const currentRowValues = [];
 
     // Insert primary key Id
-    currentRowValues.push(
-      `'${instrument.exchange}:${instrument.tradingsymbol}'`
-    );
+    currentRowValues.push(`'${instrument.tradingSymbol}'`);
 
     for (const col of columns) {
-      let value = instrument[col];
-      value = typeof value === 'object' ? value.toISOString() : value;
-      value = typeof value === 'string' ? `'${value}'` : value;
-      currentRowValues.push(value);
+      currentRowValues.push(`'${instrument[col]}'`);
     }
     currentBatchValues.push(`(${currentRowValues.join(',')})`);
 

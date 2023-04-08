@@ -1,5 +1,5 @@
 import { DIFF_PERCENT } from '@/config';
-import { SocketData, UiInstrument } from '@/types/SocketData';
+import { SocketData, UiInstrument } from '@/types';
 import { classNames } from '@/utils/ui';
 import { memo, useEffect, useState } from 'react';
 import { OrderModal } from './OrderModal';

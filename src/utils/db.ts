@@ -1,30 +1,27 @@
 import { db } from '../globals';
 
 export const getInstrumentsToSubscribe = async (
-  stockName: string,
+  symbol: string,
   expiryPrefix: string
 ) => {
   const equityStock = await db.instrument.findFirstOrThrow({
     where: {
-      id: `NSE:${stockName}`,
-      tradingsymbol: stockName,
-      instrument_type: 'EQ',
-      exchange: 'NSE',
+      id: `${symbol}-EQ`,
     },
   });
   const optionsStocks = await db.instrument.findMany({
     where: {
-      name: stockName,
+      symbol: symbol,
       exchange: 'NFO',
-      instrument_type: {
+      optionType: {
         in: ['CE', 'PE'],
       },
       expiry: {
-        startsWith: expiryPrefix,
+        endsWith: expiryPrefix,
       },
     },
     orderBy: {
-      strike: 'asc',
+      strikePrice: 'asc',
     },
   });
 
