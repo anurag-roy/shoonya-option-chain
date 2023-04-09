@@ -1,5 +1,7 @@
 import { instrument } from '@prisma/client';
 
+export type AuthStatus = 'authorized' | 'unauthorized';
+
 export type ShoonyaInstrument = {
   exchange: string;
   token: string;

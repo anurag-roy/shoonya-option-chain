@@ -4,7 +4,7 @@ import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
 import startCase from 'lodash.startcase';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-type ComboBoxProps = {
+type Props = {
   name: string;
   items: string[];
   selectedItem?: string;
@@ -16,7 +16,7 @@ export function ComboBoxInput({
   items,
   selectedItem,
   setSelectedItem,
-}: ComboBoxProps) {
+}: Props) {
   const [query, setQuery] = useState('');
   const filteredStocks =
     query === ''

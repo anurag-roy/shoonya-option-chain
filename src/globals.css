@@ -13,3 +13,11 @@ table th {
 table td {
   @apply whitespace-nowrap px-2 py-2 tabular-nums text-center font-medium text-sm text-zinc-900 dark:text-zinc-100;
 }
+
+.hide-arrows::-webkit-outer-spin-button,
+.hide-arrows::-webkit-inner-spin-button,
+.hide-arrows {
+  -webkit-appearance: none;
+  margin: 0;
+  -moz-appearance: textfield !important;
+}

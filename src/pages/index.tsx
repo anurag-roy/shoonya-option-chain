@@ -1,41 +1,43 @@
 import { Header } from '@/components/Header';
 import { Main } from '@/components/Main';
-import { kc, kt } from '@/globals';
-import { GetServerSidePropsContext } from 'next';
+import env from '@/env.json';
+import { AuthStatus } from '@/types';
+import { getUserDetails, injectTokenIntoEnv } from '@/utils/api';
 import Head from 'next/head';
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // getProfile call to check if logged in or not
-  try {
-    const profile = await kc.getProfile();
+export async function getServerSideProps() {
+  injectTokenIntoEnv();
 
-    // Connect KiteTicker if API call is successful, i.e. token is valid
-    if (!kt.connected()) kt.connect();
+  try {
+    if (!process.env.token) {
+      throw Error('Token not set');
+    }
+
+    // getProfile call to check if logged in or not
+    await getUserDetails();
 
     return {
       props: {
-        status: 'authorized' as const,
-        data: profile.user_id || '',
+        status: 'authorized',
+        data: env.USER_ID,
       },
     };
   } catch (error) {
-    console.log('Access token expired or not set.');
-    const loginUrl = kc.getLoginURL();
+    console.log('Token expired or not set.');
     return {
       props: {
-        status: 'unauthorized' as const,
-        data: loginUrl,
+        status: 'unauthorized',
       },
     };
   }
 }
 
-type HomeProps = {
-  status: 'authorized' | 'unauthorized';
+type Props = {
+  status: AuthStatus;
   data: string;
 };
 
-export default function Home({ status, data }: HomeProps) {
+export default function Home({ status, data }: Props) {
   return (
     <>
       <Head>

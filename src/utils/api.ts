@@ -1,9 +1,24 @@
 import { GROUPS } from '@/config';
+import env from '@/env.json';
 import { ShoonyaInstrument } from '@/types';
 import JSZip from 'jszip';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 
 const allowedStocks = Object.values(GROUPS).flatMap((s) => s);
+
+export const injectTokenIntoEnv = (token?: string) => {
+  if (token) {
+    process.env.token = token;
+  } else {
+    try {
+      const readToken = readFileSync('src/data/token.txt', 'utf-8');
+      process.env.token = readToken;
+    } catch (error) {
+      console.log('Token file not found. Skipping token setting...');
+    }
+  }
+};
 
 export const getHash = (input: string) =>
   createHash('sha256').update(input).digest('hex');
@@ -19,7 +34,7 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
   const result = await jsZip.loadAsync(arrayBuffer);
   const file = result.file(txtFileName);
   if (!file) {
-    ('Did not find the expected .txt file. Exiitng...');
+    ('Did not find the expected .txt file. Exiting...');
     process.exit(1);
   }
 
@@ -89,4 +104,28 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
   }
 
   return output;
+};
+
+export const getUserDetails = async () => {
+  const res = await fetch(
+    'https://api.shoonya.com/NorenWClientTP/UserDetails',
+    {
+      method: 'POST',
+      body:
+        'jData=' +
+        JSON.stringify({
+          uid: env.USER_ID,
+        }) +
+        `&jKey=${process.env.token}`,
+    }
+  );
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+  const userDetails = await res.json();
+  if (userDetails.stat !== 'Ok') {
+    throw new Error(userDetails.emsg);
+  }
+
+  return userDetails;
 };

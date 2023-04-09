@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 
-interface OrderModalProps {
+interface Props {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   i: UiInstrument;
@@ -19,7 +19,7 @@ interface OrderModalProps {
 }
 
 export const OrderModal = memo(
-  ({ open, setOpen, i, price }: OrderModalProps) => {
+  ({ open, setOpen, i, price }: Props) => {
     const [quantity, setQuantity] = useState(1);
     const [requiredMargin, setRequiredMargin] = useState<number | null>(null);
     const [netReturn, setNetReturn] = useState<string>('-');

@@ -2,12 +2,12 @@ import { GROUPS } from '@/config';
 import { Dialog, Transition } from '@headlessui/react';
 import { Dispatch, Fragment, SetStateAction } from 'react';
 
-interface GroupDetailsProps {
+interface Props {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function GroupDetails({ open, setOpen }: GroupDetailsProps) {
+export function GroupDetails({ open, setOpen }: Props) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
