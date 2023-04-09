@@ -1,5 +1,5 @@
 import { UiInstrument } from '@/types';
-import { displayInr, getMonthName } from '@/utils/ui';
+import { displayInr } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import {
@@ -28,8 +28,8 @@ export const OrderModal = memo(
       if (open) {
         const params = new URLSearchParams();
         params.append('price', price.toString());
-        params.append('quantity', (quantity * i.lot_size).toString());
-        params.append('tradingsymbol', i.tradingsymbol);
+        params.append('quantity', (quantity * i.lotSize).toString());
+        params.append('tradingsymbol', i.tradingSymbol);
         fetch('/api/getMargin?' + params.toString())
           .then((res) => res.json())
           .then((margin) => setRequiredMargin(margin.total));
@@ -40,7 +40,7 @@ export const OrderModal = memo(
       if (requiredMargin) {
         const returnValue =
           (
-            ((price - 0.05) * i.lot_size * quantity * 100) /
+            ((price - 0.05) * i.lotSize * quantity * 100) /
             requiredMargin
           ).toFixed(2) + '%';
         setNetReturn(returnValue);
@@ -52,8 +52,8 @@ export const OrderModal = memo(
     const placeSellOrder = () => {
       const body = {
         price: price,
-        quantity: i.lot_size * quantity,
-        tradingsymbol: i.tradingsymbol,
+        quantity: i.lotSize * quantity,
+        tradingsymbol: i.tradingSymbol,
       };
       fetch('/api/placeSellOrder', {
         method: 'POST',
@@ -111,8 +111,8 @@ export const OrderModal = memo(
                   className="-m-6 px-6 py-4 flex flex-row justify-between items-center mb-12 border-b border-zinc-500/20 bg-zinc-50 dark:bg-zinc-500/5"
                 >
                   <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                    {i.name} {i.strike} {i.instrument_type}{' '}
-                    {getMonthName(i.expiry)}
+                    {i.symbol} {i.strikePrice} {i.optionType}{' '}
+                    {i.expiry.slice(0, 3)}
                   </h3>
                   <button
                     type="button"
@@ -165,7 +165,7 @@ export const OrderModal = memo(
                     Total
                   </span>
                   <span className="px-5 py-2 bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 rounded-md">
-                    {i.lot_size}
+                    {i.lotSize}
                   </span>
                   <span className="text-sm font-medium text-zinc-500">×</span>
                   <input
@@ -178,7 +178,7 @@ export const OrderModal = memo(
                   />
                   <span className="text-sm font-medium text-zinc-500">=</span>
                   <span className="px-5 py-2 bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 rounded-md">
-                    {i.lot_size * quantity}
+                    {i.lotSize * quantity}
                   </span>
                 </div>
                 <div className="flex flex-row-reverse gap-4">

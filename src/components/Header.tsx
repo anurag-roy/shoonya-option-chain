@@ -7,10 +7,9 @@ import { ThemeToggle } from './ThemeToggle';
 
 type Props = {
   status: AuthStatus;
-  data: string;
 };
 
-export function Header({ status, data }: Props) {
+export function Header({ status }: Props) {
   const [authStatus, setAuthStatus] = useState<AuthStatus>(status);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
@@ -27,7 +26,7 @@ export function Header({ status, data }: Props) {
             className="-ml-1 mr-2 h-5 w-5 fill-emerald-600 dark:fill-emerald-200/50"
             aria-hidden="true"
           />
-          Logged in ({data})
+          Logged in
         </span>
       ) : (
         <button

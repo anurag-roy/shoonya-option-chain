@@ -7,9 +7,9 @@ type Props = {
   i: UiInstrument;
 };
 
-const TableRow = ({ i }: Props) => {
+export const TableRow = ({ i }: Props) => {
   const adjustedBid = Math.max(0, Number((i.bid - 0.05).toFixed(2)));
-  const value = Number((adjustedBid * i.lot_size).toFixed(2));
+  const value = Number((adjustedBid * i.lotSize).toFixed(2));
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
@@ -18,12 +18,12 @@ const TableRow = ({ i }: Props) => {
       <td
         className={classNames(
           '-px-4 font-medium',
-          i.instrument_type === 'CE'
+          i.optionType === 'CE'
             ? 'bg-yellow-50/50 text-yellow-800 dark:bg-stone-700/10 dark:text-yellow-400'
             : 'text-zinc-900 dark:bg-zinc-800/10 dark:text-zinc-100'
         )}
       >
-        {i.strike} {i.instrument_type}
+        {i.strikePrice} {i.optionType}
       </td>
       <td
         className={classNames(

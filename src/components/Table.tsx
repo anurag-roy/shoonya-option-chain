@@ -2,6 +2,7 @@ import { DIFF_PERCENT } from '@/config';
 import { SocketData, UiInstrument } from '@/types';
 import { classNames } from '@/utils/ui';
 import { memo, useEffect, useState } from 'react';
+import { TableRow } from './TableRow';
 
 type Props = {
   name: string;
@@ -16,10 +17,10 @@ export const Table = memo(({ name, expiry }: Props) => {
   const filteredInstruments = instruments?.filter((i) => {
     if (!ltp) return true;
     return (
-      (i.strike <= ((100 - DIFF_PERCENT) * ltp) / 100 &&
-        i.instrument_type === 'PE') ||
-      (i.strike >= ((100 + DIFF_PERCENT) * ltp) / 100 &&
-        i.instrument_type === 'CE')
+      (i.strikePrice <= ((100 - DIFF_PERCENT) * ltp) / 100 &&
+        i.optionType === 'PE') ||
+      (i.strikePrice >= ((100 + DIFF_PERCENT) * ltp) / 100 &&
+        i.optionType === 'CE')
     );
   });
 
@@ -48,11 +49,10 @@ export const Table = memo(({ name, expiry }: Props) => {
         } else if (action === 'option-update') {
           setInstruments((instruments) =>
             instruments.map((i) => {
-              if (i.instrument_token === data.token) {
+              if (i.token === data.token) {
                 return {
                   ...i,
-                  bid: data.bid,
-                  ask: data.ask,
+                  ...data,
                 };
               } else {
                 return i;
@@ -106,9 +106,7 @@ export const Table = memo(({ name, expiry }: Props) => {
                 <td colSpan={4}>No data to display.</td>
               </tr>
             ) : (
-              filteredInstruments.map((i) => (
-                <TableRow key={i.instrument_token} i={i} />
-              ))
+              filteredInstruments.map((i) => <TableRow key={i.token} i={i} />)
             )}
           </tbody>
         </table>

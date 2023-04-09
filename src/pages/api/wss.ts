@@ -1,7 +1,9 @@
 import { DIFF_PERCENT } from '@/config';
-import { clients, kc, kt, tokenMap } from '@/globals';
+import { clients, tokenMap } from '@/globals';
 import { UiInstrument } from '@/types';
+import { getQuotes } from '@/utils/api';
 import { getInstrumentsToSubscribe } from '@/utils/db';
+import { subscribeToTokens, unsubscribeFromTokens } from '@/utils/socket';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';
 
@@ -20,14 +22,14 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         clients.delete(name);
 
         // Unsubscribe ticker from all associated tokens
-        const tokensToUnsubscribe: number[] = [];
+        const tokensToUnsubscribe: string[] = [];
         for (const [token, stockName] of tokenMap) {
           if (stockName === name) {
             tokensToUnsubscribe.push(token);
             tokenMap.delete(token);
           }
         }
-        kt.unsubscribe(tokensToUnsubscribe);
+        unsubscribeFromTokens(tokensToUnsubscribe);
       });
 
       // Get initial stocks from DB
@@ -37,24 +39,24 @@ export const socket: NextWebSocketHandler = async (client, req) => {
       );
 
       // Get LTP to calculate lower bound and upper bound
-      const response = await kc.getOHLC([equityStock.id]);
-      const ohlcResponse = response[equityStock.id];
+      const response = await getQuotes('NSE', equityStock.token);
+      const ltp = Number(response.lp);
       const lowerBound =
-        equityStock.tradingsymbol === 'ADANIENT'
-          ? 0.5 * ohlcResponse.last_price
-          : ((100 - 0.75 * DIFF_PERCENT) * ohlcResponse.last_price) / 100;
+        equityStock.symbol === 'ADANIENT'
+          ? 0.5 * ltp
+          : ((100 - 0.75 * DIFF_PERCENT) * ltp) / 100;
       const upperBound =
-        equityStock.tradingsymbol === 'ADANIENT'
-          ? 1.5 * ohlcResponse.last_price
-          : ((100 + 0.75 * DIFF_PERCENT) * ohlcResponse.last_price) / 100;
+        equityStock.symbol === 'ADANIENT'
+          ? 1.5 * ltp
+          : ((100 + 0.75 * DIFF_PERCENT) * ltp) / 100;
 
       // Compute filtered stocks to send the scoket client
+      const stocksToSubscribe = [`NSE|${equityStock.token}`];
       const filteredOptionStocks: UiInstrument[] = [];
-      const optionStocksToSubscribe: number[] = [];
       for (const stock of optionsStocks) {
         if (
-          (stock.strike <= lowerBound && stock.instrument_type === 'PE') ||
-          (stock.strike >= upperBound && stock.instrument_type === 'CE')
+          (stock.strikePrice <= lowerBound && stock.optionType === 'PE') ||
+          (stock.strikePrice >= upperBound && stock.optionType === 'CE')
         ) {
           filteredOptionStocks.push({
             ...stock,
@@ -62,31 +64,26 @@ export const socket: NextWebSocketHandler = async (client, req) => {
             ask: 0,
           });
           // Store token, to later unsubscribe easily
-          tokenMap.set(stock.instrument_token, name);
-          optionStocksToSubscribe.push(stock.instrument_token);
+          tokenMap.set(stock.token, `NFO|${stock.token}`);
+          stocksToSubscribe.push(`NFO|${stock.token}`);
         }
       }
       // Store the equity instrument as well
-      tokenMap.set(equityStock.instrument_token, name);
+      tokenMap.set(equityStock.token, `NSE|${equityStock.token}`);
 
       // Send client init data
       client.send(
         JSON.stringify({
           action: 'init',
           data: {
-            ltp: ohlcResponse.last_price,
-            previousClose: ohlcResponse.ohlc.close,
+            ltp: ltp,
+            previousClose: Number(response.c),
             options: filteredOptionStocks,
           },
         })
       );
 
-      // Only ltp is required for equity instrument
-      kt.setMode('ltp', [equityStock.instrument_token]);
-      kt.setMode(
-        'full',
-        filteredOptionStocks.map((o) => o.instrument_token)
-      );
+      subscribeToTokens(stocksToSubscribe);
     }
   }
 };

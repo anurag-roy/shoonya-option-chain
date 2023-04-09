@@ -1,19 +1,26 @@
 import { GROUPS } from '@/config';
 import env from '@/env.json';
-import { ShoonyaInstrument } from '@/types';
+import { Quotes, ShoonyaInstrument } from '@/types/shoonya';
 import JSZip from 'jszip';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 
 const allowedStocks = Object.values(GROUPS).flatMap((s) => s);
 
-export const injectTokenIntoEnv = (token?: string) => {
+export const injectTokenIntoEnv = async (token?: string) => {
   if (token) {
     process.env.token = token;
   } else {
     try {
       const readToken = readFileSync('src/data/token.txt', 'utf-8');
       process.env.token = readToken;
+
+      try {
+        await getUserDetails();
+      } catch (error) {
+        console.log('Token expired');
+        process.env.token = undefined;
+      }
     } catch (error) {
       console.log('Token file not found. Skipping token setting...');
     }
@@ -104,6 +111,31 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
   }
 
   return output;
+};
+
+export const getQuotes = async (
+  exchange: 'NSE' | 'NFO',
+  instrumentToken: string
+) => {
+  const res = await fetch('https://api.shoonya.com/NorenWClientTP/GetQuotes', {
+    method: 'POST',
+    body:
+      'jData=' +
+      JSON.stringify({
+        uid: env.USER_ID,
+        exch: exchange,
+        token: instrumentToken,
+      }) +
+      `&jKey=${process.env.token}`,
+  });
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+  const quotes = await res.json();
+  if (quotes.stat !== 'Ok') {
+    throw new Error(quotes.emsg);
+  }
+  return quotes as Quotes;
 };
 
 export const getUserDetails = async () => {

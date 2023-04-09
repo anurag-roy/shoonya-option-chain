@@ -98,7 +98,7 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
             leaveTo="opacity-0 translate-y-0 scale-95"
           >
             <div className="relative inline-block align-middle bg-white dark:bg-zinc-900 rounded-lg px-12 py-6 text-left overflow-hidden shadow-xl transform transition-all my-8">
-              <p className="text-zinc-800 text-center font-semibold text-2xl mb-16">
+              <p className="text-zinc-800 dark:text-zinc-300 text-center font-semibold text-2xl mb-16">
                 Confirm TOTP to login
               </p>
               <form onSubmit={confirmTotp} method="post">
@@ -109,7 +109,7 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
                   {digitIds.map((i) => (
                     <input
                       key={i.toString()}
-                      className="w-14 h-16 text-center px-4 hide-arrows outline-none rounded-xl border border-zinc-200 text-lg bg-white focus:bg-zinc-50 focus:ring-1 ring-blue-700"
+                      className="w-14 h-16 text-center px-4 hide-arrows outline-none rounded-xl border border-zinc-200 dark:border-zinc-600 text-lg dark:bg-zinc-800 focus:bg-zinc-50 focus:ring-1 ring-blue-700"
                       type="number"
                       name={`otp-input-${i}`}
                       id={`otp-input-${i}`}
@@ -117,7 +117,7 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
                     />
                   ))}
                 </div>
-                <p className="text-center text-sm font-medium text-zinc-400 mb-16">
+                <p className="text-center text-sm font-medium text-zinc-400 dark:text-zinc-500 mb-16">
                   Please enter the TOTP generated on your Authenticator app.
                 </p>
                 <button

@@ -8,9 +8,9 @@ if (!clientMapRef.value) {
   clientMapRef.value = new Map<string, WebSocket>();
 }
 
-const tokenMapRef = new GlobalRef<Map<number, string>>('myapp.tokenmap');
+const tokenMapRef = new GlobalRef<Map<string, string>>('myapp.tokenmap');
 if (!tokenMapRef.value) {
-  tokenMapRef.value = new Map<number, string>();
+  tokenMapRef.value = new Map<string, string>();
 }
 
 export const clients = clientMapRef.value;
