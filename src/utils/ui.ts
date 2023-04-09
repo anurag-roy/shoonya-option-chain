@@ -6,18 +6,14 @@ export const getKeys = <T extends Object>(object: T) =>
 export const classNames = (...classes: (boolean | string)[]) =>
   classes.filter(Boolean).join(' ');
 
-export const getMonthName = (dateString: string) =>
-  new Date(dateString)
-    .toLocaleDateString('en-US', {
-      month: 'short',
-    })
+export const getMonthName = (monthIndex: number) => {
+  // Adjust from 0 based month to irl month index
+  const numericMonth = (monthIndex + 1).toString();
+  const monthDate = new Date(numericMonth);
+  return Intl.DateTimeFormat('en', { month: 'short' })
+    .format(monthDate)
     .toUpperCase();
-
-const getPaddedMonth = (monthIndex: number) =>
-  (monthIndex + 1).toLocaleString('en-US', {
-    minimumIntegerDigits: 2,
-    useGrouping: false,
-  });
+};
 
 export const getExpiryOptions = () => {
   const date = new Date();
@@ -27,7 +23,7 @@ export const getExpiryOptions = () => {
   const options: string[] = [];
 
   for (let i = 0; i < EXPIRY_OPTION_LENGTH; i++) {
-    options.push(`${currentYear}-${getPaddedMonth(currentMonthIndex)}`);
+    options.push(`${getMonthName(currentMonthIndex)}-${currentYear}`);
 
     currentMonthIndex = currentMonthIndex + 1;
     if (currentMonthIndex > 11) {
