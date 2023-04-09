@@ -29,10 +29,10 @@ export const OrderModal = memo(
         const params = new URLSearchParams();
         params.append('price', price.toString());
         params.append('quantity', (quantity * i.lotSize).toString());
-        params.append('tradingsymbol', i.tradingSymbol);
+        params.append('tradingSymbol', i.tradingSymbol);
         fetch('/api/getMargin?' + params.toString())
           .then((res) => res.json())
-          .then((margin) => setRequiredMargin(margin.total));
+          .then((margin) => setRequiredMargin(margin.ordermargin));
       }
     }, [quantity, open]);
 
@@ -51,9 +51,9 @@ export const OrderModal = memo(
 
     const placeSellOrder = () => {
       const body = {
-        price: price,
-        quantity: i.lotSize * quantity,
-        tradingsymbol: i.tradingSymbol,
+        price: price.toString(),
+        quantity: (i.lotSize * quantity).toString(),
+        tradingSymbol: i.tradingSymbol,
       };
       fetch('/api/placeSellOrder', {
         method: 'POST',

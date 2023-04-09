@@ -1,29 +1,38 @@
-import { kc } from '@/globals';
+import env from '@/env.json';
 import { NextApiHandler } from 'next';
 
 const handler: NextApiHandler = async (req, res) => {
-  const { price, quantity, tradingsymbol } = req.query;
+  const { price, quantity, tradingSymbol } = req.query;
 
-  const [marginResponse] = await kc.orderMargins(
-    [
-      {
-        exchange: 'NFO',
-        order_type: 'LIMIT',
-        price: Number(price),
-        product: 'NRML',
-        quantity: Number(quantity),
-        tradingsymbol: tradingsymbol as string,
-        transaction_type: 'SELL',
-        variety: 'regular',
-        trigger_price: 0,
-      },
-    ],
-    'compact'
+  const marginRes = await fetch(
+    'https://api.shoonya.com/NorenWClientTP/GetOrderMargin',
+    {
+      method: 'POST',
+      body:
+        'jData=' +
+        JSON.stringify({
+          uid: env.USER_ID,
+          actid: env.USER_ID,
+          exch: 'NFO',
+          tsym: tradingSymbol,
+          qty: quantity,
+          prc: price,
+          prd: 'M',
+          trantype: 'S',
+          prctyp: 'LMT',
+        }) +
+        `&jKey=${process.env.token}`,
+    }
   );
+  if (!marginRes.ok) {
+    throw new Error(await marginRes.text());
+  }
+  const margin = await marginRes.json();
+  if (margin.stat !== 'Ok') {
+    throw new Error(margin.emsg);
+  }
 
-  return res.json({
-    total: marginResponse.total,
-  });
+  return res.json(margin);
 };
 
 export default handler;
