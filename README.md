@@ -2,7 +2,7 @@
 
 # Option Chain
 
-Live Option Chain for Equity Derivatives using Zerodha Kite APIs and Next.js
+Live Option Chain for Equity Derivatives using Finvasia (Shoonya) APIs and Next.js
 
 <img width="1412" alt="option-chain" src="https://user-images.githubusercontent.com/53750093/219455211-6384c214-0aae-461b-a020-30f3039794d7.png">
   
@@ -67,7 +67,7 @@ npm start
 
 ### Port
 
-The default port is `8000`. To change it, update the `dev` and `start` scripts in `package.json`.
+The default port is `3000`. To change it, update the `dev` and `start` scripts in `package.json`.
 
 ### config.ts
 
@@ -79,14 +79,14 @@ Edit `src/config.ts` to:
 
 ## Scopes of improvement
 
-There are definitely some optimisations that can be made, but were not made because I did not experience any slowdon or lagging so I don't see a good ROI for the effort it will take. But anyway, just jotting them down if I ever feel tackling on any one:
+There are definitely some optimisations that can be made, but were not made because I did not experience any slowdown or lag so I don't see a good ROI for the effort it will take. But anyway, just jotting them down if I ever feel tackling on any one:
 
-- Custom ticker parser to parse only `instrument_token`, ltp (for equity) and first bid and first ask (for options). Gist [here](https://gist.github.com/anurag-roy/6df7f3cc6eef6b299a9140aa94c16548).
+- Move everything to UI from the server
 - On the frontend, granular update of each instrument object instead of the whole array.
 
 ## Related
 
-- [KiteConnect TypeScript Library](https://github.com/anurag-roy/kiteconnect-ts)
+- [Kite Option Chain](https://github.com/anurag-roy/kite-option-chain)
 - [5paisa Live Ticker](https://github.com/anurag-roy/5paisa-live-ticker)
 
 ## Contact
