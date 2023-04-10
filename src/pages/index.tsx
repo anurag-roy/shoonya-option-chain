@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header';
 import { Main } from '@/components/Main';
+import { ticker } from '@/globals';
 import { AuthStatus } from '@/types';
 import { injectTokenIntoEnv } from '@/utils/api';
 import Head from 'next/head';
@@ -13,6 +14,10 @@ export async function getServerSideProps() {
         status: 'unauthorized',
       },
     };
+  }
+
+  // Call ticker here to init
+  if (ticker) {
   }
 
   return {

@@ -31,7 +31,7 @@ export const Table = memo(({ name, expiry }: Props) => {
       console.log('Connecting websocket');
 
       const ws = new WebSocket(
-        `ws://localhost:8000/api/wss?name=${encodeURIComponent(
+        `ws://localhost:3000/api/wss?name=${encodeURIComponent(
           name
         )}&expiry=${encodeURIComponent(expiry)}`
       );

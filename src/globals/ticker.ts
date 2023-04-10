@@ -1,26 +1,38 @@
+import env from '@/env.json';
 import { TouchlineResponse } from '@/types/shoonya';
 import { MessageEvent, WebSocket } from 'ws';
 import { GlobalRef } from './GlobalRef';
 import { clients, tokenMap } from './maps';
 
-const socket = new GlobalRef<WebSocket>('myapp.ticker');
-if (!socket.value) {
-  const ws = new WebSocket('wss://api.shoonya.com/NorenWSTP/');
-  ws.onopen = () => {
+const ws = new GlobalRef<WebSocket>('myapp.ticker');
+if (!ws.value) {
+  ws.value = new WebSocket('wss://api.shoonya.com/NorenWSTP/');
+  ws.value.onopen = () => {
     console.log('Ticker initialized...');
+
+    ws.value.send(
+      JSON.stringify({
+        t: 'c',
+        uid: env.USER_ID,
+        actid: env.USER_ID,
+        susertoken: process.env.token,
+        source: 'API',
+      })
+    );
   };
 
-  ws.onclose = () => {
+  ws.value.onclose = () => {
     console.log('Ticker connection closed.');
   };
 
-  ws.onerror = (error) => {
+  ws.value.onerror = (error) => {
     console.log('Ticker error', error);
   };
 
-  ws.onmessage = (messageEvent: MessageEvent) => {
-    const data = JSON.parse(messageEvent.data as string) as TouchlineResponse;
-    if (data.t === 'tk' || data.t === 'tf') {
+  ws.value.onmessage = (messageEvent: MessageEvent) => {
+    const messageData = JSON.parse(messageEvent.data as string);
+    if (messageData.t === 'tk' || messageData.t === 'tf') {
+      const data = messageData as TouchlineResponse;
       const socketId = tokenMap.get(data.tk);
       if (!socketId) {
         return;
@@ -54,8 +66,10 @@ if (!socket.value) {
         }
       }
       socketClient?.send(JSON.stringify(message));
+    } else if (messageData.t === 'ck' && messageData.s === 'OK') {
+      console.log('Ticker connected successfully!');
     }
   };
 }
 
-export const ticker = socket.value;
+export const ticker = ws.value;

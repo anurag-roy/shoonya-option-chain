@@ -9,7 +9,7 @@ import { NextWebSocketHandler } from 'next-plugin-websocket';
 
 export const socket: NextWebSocketHandler = async (client, req) => {
   if (req.url) {
-    const url = new URL(req.url, 'http://localhost:8000');
+    const url = new URL(req.url, 'http://localhost:3000');
     const name = url.searchParams.get('name');
     const expiry = url.searchParams.get('expiry');
 
