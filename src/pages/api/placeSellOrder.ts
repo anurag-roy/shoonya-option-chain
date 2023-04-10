@@ -30,7 +30,7 @@ const handler: NextApiHandler = async (req, res) => {
   }
   const orderResult = await orderRes.json();
 
-  return orderResult;
+  res.json(orderResult);
 };
 
 export default handler;

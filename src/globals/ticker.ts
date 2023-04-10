@@ -1,4 +1,5 @@
 import env from '@/env.json';
+import { SocketData } from '@/types';
 import { TouchlineResponse } from '@/types/shoonya';
 import { MessageEvent, WebSocket } from 'ws';
 import { GlobalRef } from './GlobalRef';
@@ -43,7 +44,7 @@ if (!ws.value) {
         return;
       }
 
-      let message: any;
+      let message: SocketData;
       if (data.e === 'NSE' && 'lp' in data) {
         message = {
           action: 'ltp-update',
@@ -59,10 +60,10 @@ if (!ws.value) {
           },
         };
         if ('bp1' in data) {
-          message.action.data.bid = Number(data.bp1);
+          message.data.bid = Number(data.bp1);
         }
         if ('sp1' in data) {
-          message.action.data.ask = Number(data.sp1);
+          message.data.ask = Number(data.sp1);
         }
       }
       socketClient?.send(JSON.stringify(message));

@@ -11,6 +11,16 @@ export type ShoonyaInstrument = {
   tickSize: string;
 };
 
+export type MarginResponse = {
+  request_time: string;
+  stat: string;
+  cash: string;
+  marginused: string;
+  remarks: 'Insufficient Balance' | 'Order Success';
+  marginusedprev: string;
+  ordermargin: string;
+};
+
 export type Quotes = {
   /**
    * Time of request

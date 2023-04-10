@@ -6,7 +6,7 @@ import { injectTokenIntoEnv } from '@/utils/api';
 import Head from 'next/head';
 
 export async function getServerSideProps() {
-  injectTokenIntoEnv();
+  await injectTokenIntoEnv();
 
   if (!process.env.token) {
     return {

@@ -1,5 +1,5 @@
 import { DIFF_PERCENT } from '@/config';
-import { clients, tokenMap } from '@/globals';
+import { clients, subscriptionMap, tokenMap } from '@/globals';
 import { UiInstrument } from '@/types';
 import { getQuotes } from '@/utils/api';
 import { getInstrumentsToSubscribe } from '@/utils/db';
@@ -25,7 +25,11 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         const tokensToUnsubscribe: string[] = [];
         for (const [token, stockName] of tokenMap) {
           if (stockName === name) {
-            tokensToUnsubscribe.push(token);
+            const subscriptionCode = subscriptionMap.get(token);
+            if (subscriptionCode) {
+              tokensToUnsubscribe.push(token);
+              subscriptionMap.delete(token);
+            }
             tokenMap.delete(token);
           }
         }
@@ -64,12 +68,14 @@ export const socket: NextWebSocketHandler = async (client, req) => {
             ask: 0,
           });
           // Store token, to later unsubscribe easily
-          tokenMap.set(stock.token, `NFO|${stock.token}`);
+          tokenMap.set(stock.token, name);
           stocksToSubscribe.push(`NFO|${stock.token}`);
+          subscriptionMap.set(stock.token, `NFO|${stock.token}`);
         }
       }
       // Store the equity instrument as well
-      tokenMap.set(equityStock.token, `NSE|${equityStock.token}`);
+      tokenMap.set(equityStock.token, name);
+      subscriptionMap.set(equityStock.token, `NSO|${equityStock.token}`);
 
       // Send client init data
       client.send(

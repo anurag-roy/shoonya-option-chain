@@ -1,5 +1,6 @@
 import { UiInstrument } from '@/types';
-import { displayInr } from '@/utils/ui';
+import { MarginResponse } from '@/types/shoonya';
+import { classNames, displayInr } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import {
@@ -21,7 +22,7 @@ interface Props {
 export const OrderModal = memo(
   ({ open, setOpen, i, price }: Props) => {
     const [quantity, setQuantity] = useState(1);
-    const [requiredMargin, setRequiredMargin] = useState<number | null>(null);
+    const [margin, setMargin] = useState<MarginResponse | null>(null);
     const [netReturn, setNetReturn] = useState<string>('-');
 
     useEffect(() => {
@@ -32,22 +33,22 @@ export const OrderModal = memo(
         params.append('tradingSymbol', i.tradingSymbol);
         fetch('/api/getMargin?' + params.toString())
           .then((res) => res.json())
-          .then((margin) => setRequiredMargin(margin.ordermargin));
+          .then((margin) => setMargin(margin));
       }
     }, [quantity, open]);
 
     useEffect(() => {
-      if (requiredMargin) {
+      if (margin) {
         const returnValue =
           (
             ((price - 0.05) * i.lotSize * quantity * 100) /
-            requiredMargin
+            Number(margin.ordermargin)
           ).toFixed(2) + '%';
         setNetReturn(returnValue);
       } else {
         setNetReturn('-');
       }
-    }, [requiredMargin]);
+    }, [margin]);
 
     const placeSellOrder = () => {
       const body = {
@@ -112,7 +113,7 @@ export const OrderModal = memo(
                 >
                   <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                     {i.symbol} {i.strikePrice} {i.optionType}{' '}
-                    {i.expiry.slice(0, 3)}
+                    {i.expiry.split('-')[1]}
                   </h3>
                   <button
                     type="button"
@@ -140,14 +141,25 @@ export const OrderModal = memo(
                     </h4>
                     <p className="font-bold text-2xl">{displayInr(price)}</p>
                   </div>
-                  <div className="p-4 rounded-md text-red-800 bg-red-50/50 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
-                    <h4 className="font-semibold text-sm text-red-700 dark:text-red-500">
-                      Margin
-                    </h4>
-                    <p className="font-bold text-2xl">
-                      {requiredMargin ? displayInr(requiredMargin) : '-'}
-                    </p>
-                  </div>
+                  {margin?.remarks === 'Insufficient Balance' ? (
+                    <div className="p-4 rounded-md text-red-800 bg-red-50/50 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
+                      <h4 className="font-semibold text-sm text-red-700 dark:text-red-500">
+                        Shortfall
+                      </h4>
+                      <p className="font-bold text-2xl">
+                        {margin ? displayInr(Number(margin.marginused)) : '-'}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
+                      <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
+                        Margin
+                      </h4>
+                      <p className="font-bold text-2xl">
+                        {margin ? displayInr(Number(margin.ordermargin)) : '-'}
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="max-w-sm mx-auto grid grid-cols-[repeat(5,_auto)] place-items-center gap-x-4 gap-y-2 mb-16">
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -184,7 +196,13 @@ export const OrderModal = memo(
                 <div className="flex flex-row-reverse gap-4">
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-full border border-transparent shadow-sm px-6 py-2.5 bg-blue-600 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-3 w-auto"
+                    disabled={margin?.remarks === 'Insufficient Balance'}
+                    className={classNames(
+                      'inline-flex justify-center rounded-full border border-transparent shadow-sm px-6 py-2.5 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-3 w-auto',
+                      margin?.remarks === 'Insufficient Balance'
+                        ? 'bg-zinc-700 pointer-events-none cursor-not-allowed'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    )}
                     onClick={placeSellOrder}
                   >
                     Place Sell Order
