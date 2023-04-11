@@ -1,4 +1,5 @@
 import env from '@/env.json';
+import { ticker } from '@/globals';
 import { getHash, injectTokenIntoEnv } from '@/utils/api';
 import { NextApiHandler } from 'next';
 import { writeFileSync } from 'node:fs';
@@ -37,6 +38,16 @@ const handler: NextApiHandler = async (req, res) => {
 
     injectTokenIntoEnv(loginResponse.susertoken);
     writeFileSync('src/data/token.txt', loginResponse.susertoken, 'utf-8');
+
+    ticker.send(
+      JSON.stringify({
+        t: 'c',
+        uid: env.USER_ID,
+        actid: env.USER_ID,
+        susertoken: process.env.token,
+        source: 'API',
+      })
+    );
 
     res.json({ message: 'Login successful!' });
   } catch (error) {

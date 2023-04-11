@@ -9,17 +9,19 @@ const ws = new GlobalRef<WebSocket>('myapp.ticker');
 if (!ws.value) {
   ws.value = new WebSocket('wss://api.shoonya.com/NorenWSTP/');
   ws.value.onopen = () => {
-    console.log('Ticker initialized...');
+    console.log('Ticker initialized and ready to connect...');
 
-    ws.value.send(
-      JSON.stringify({
-        t: 'c',
-        uid: env.USER_ID,
-        actid: env.USER_ID,
-        susertoken: process.env.token,
-        source: 'API',
-      })
-    );
+    if (process.env.token) {
+      ws.value.send(
+        JSON.stringify({
+          t: 'c',
+          uid: env.USER_ID,
+          actid: env.USER_ID,
+          susertoken: process.env.token,
+          source: 'API',
+        })
+      );
+    }
   };
 
   ws.value.onclose = () => {
