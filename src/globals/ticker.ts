@@ -32,7 +32,33 @@ if (!ws.value) {
 
   ws.value.onmessage = (messageEvent: MessageEvent) => {
     const messageData = JSON.parse(messageEvent.data as string);
-    if (messageData.t === 'tk' || messageData.t === 'tf') {
+    if (messageData.t === 'tk') {
+      const socketId = tokenMap.get(messageData.tk);
+      if (!socketId) {
+        return;
+      }
+
+      const socketClient = clients.get(socketId)!;
+      if (!socketClient) {
+        return;
+      }
+
+      if (!('oi' in messageData)) {
+        let message: SocketData = {
+          action: 'option-remove',
+          data: {
+            token: messageData.tk,
+          },
+        };
+        ws.value.send(
+          JSON.stringify({
+            t: 'u',
+            k: `${messageData.e}|${messageData.tk}`,
+          })
+        );
+        socketClient?.send(JSON.stringify(message));
+      }
+    } else if (messageData.t === 'tf') {
       const data = messageData as TouchlineResponse;
       const socketId = tokenMap.get(data.tk);
       if (!socketId) {

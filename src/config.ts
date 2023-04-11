@@ -41,7 +41,7 @@ export const GROUPS = {
     'BANDHANBNK',
     'MOTHERSON',
     'MRF',
-    'MARUTI'
+    'MARUTI',
   ],
   'Basic Commodities, Hospital Labs': [
     'OFSS',

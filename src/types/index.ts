@@ -29,4 +29,10 @@ export type SocketData =
         bid?: number;
         ask?: number;
       };
+    }
+  | {
+      action: 'option-remove';
+      data: {
+        token: string;
+      };
     };
