@@ -60,7 +60,6 @@ export const Table = memo(({ name, expiry }: Props) => {
             })
           );
         } else if (action === 'option-remove') {
-          console.log('option-remove for', data.token);
           setInstruments((instruments) =>
             instruments.filter((i) => i.token !== data.token)
           );

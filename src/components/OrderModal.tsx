@@ -151,14 +151,26 @@ export const OrderModal = memo(
                       </p>
                     </div>
                   ) : (
-                    <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
-                      <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
-                        Margin
-                      </h4>
-                      <p className="font-bold text-2xl">
-                        {margin ? displayInr(Number(margin.ordermargin)) : '-'}
+                    <>
+                      <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
+                        <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
+                          Margin
+                        </h4>
+                        <p className="font-bold text-2xl">
+                          {margin
+                            ? displayInr(Number(margin.ordermargin))
+                            : '-'}
+                        </p>
+                      </div>
+                      <p className="col-span-2 text-right text-sm font-semibold">
+                        Remaining Cash:{' '}
+                        {displayInr(
+                          Number(margin?.cash) -
+                            Number(margin?.marginusedprev) -
+                            Number(margin?.ordermargin)
+                        )}
                       </p>
-                    </div>
+                    </>
                   )}
                 </div>
                 <div className="max-w-sm mx-auto grid grid-cols-[repeat(5,_auto)] place-items-center gap-x-4 gap-y-2 mb-16">
