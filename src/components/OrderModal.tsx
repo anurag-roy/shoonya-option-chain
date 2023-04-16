@@ -1,5 +1,5 @@
 import { UiInstrument } from '@/types';
-import { MarginResponse } from '@/types/shoonya';
+import { MarginResponse, Quotes } from '@/types/shoonya';
 import { classNames, displayInr } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
@@ -11,6 +11,8 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { BuyerTable } from './BuyerTable';
+import { SellerTable } from './SellerTable';
 
 interface Props {
   open: boolean;
@@ -24,16 +26,21 @@ export const OrderModal = memo(
     const [quantity, setQuantity] = useState(1);
     const [margin, setMargin] = useState<MarginResponse | null>(null);
     const [netReturn, setNetReturn] = useState<string>('-');
+    const [quote, setQuote] = useState<Quotes | null>(null);
 
     useEffect(() => {
       if (open) {
-        const params = new URLSearchParams();
-        params.append('price', price.toString());
-        params.append('quantity', (quantity * i.lotSize).toString());
-        params.append('tradingSymbol', i.tradingSymbol);
-        fetch('/api/getMargin?' + params.toString())
+        const marginParams = new URLSearchParams();
+        marginParams.append('price', price.toString());
+        marginParams.append('quantity', (quantity * i.lotSize).toString());
+        marginParams.append('tradingSymbol', i.tradingSymbol);
+        fetch('/api/getMargin?' + marginParams.toString())
           .then((res) => res.json())
           .then((margin) => setMargin(margin));
+
+        fetch('/api/getQuotes?token=' + i.token)
+          .then((res) => res.json())
+          .then((quote) => setQuote(quote));
       }
     }, [quantity, open]);
 
@@ -124,56 +131,62 @@ export const OrderModal = memo(
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </Dialog.Title>
-                <div className="max-w-sm mx-auto grid grid-cols-[auto,_auto] gap-x-6 gap-y-4 mb-10">
-                  <div className="col-span-2 flex items-center gap-1 px-4 py-3 rounded-md text-blue-800 bg-blue-50/50 ring-1 ring-inset ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/5 dark:text-blue-200">
-                    <InformationCircleIcon
-                      className="h-4 w-4 fill-blue-600 dark:fill-blue-200/50"
-                      aria-hidden="true"
-                    />
-                    <span className="font-semibold text-sm text-blue-700 dark:text-blue-500">
-                      Net Return on this margin is:
-                    </span>
-                    <span className="ml-2 font-bold text-xl">{netReturn}</span>
-                  </div>
-                  <div className="p-4 rounded-md text-emerald-800 bg-emerald-50/50 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">
-                    <h4 className="font-semibold text-sm text-emerald-700 dark:text-emerald-500">
-                      Price
-                    </h4>
-                    <p className="font-bold text-2xl">{displayInr(price)}</p>
-                  </div>
-                  {margin?.remarks === 'Insufficient Balance' ? (
-                    <div className="p-4 rounded-md text-red-800 bg-red-50/50 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
-                      <h4 className="font-semibold text-sm text-red-700 dark:text-red-500">
-                        Shortfall
-                      </h4>
-                      <p className="font-bold text-2xl">
-                        {margin ? displayInr(Number(margin.marginused)) : '-'}
-                      </p>
+                <div className="flex gap-12 mb-8 items-start">
+                  <BuyerTable quote={quote} />
+                  <div className="max-w-sm mx-auto grid grid-cols-[auto,_auto] gap-6">
+                    <div className="col-span-2 flex items-center gap-1 px-4 py-3 rounded-md text-blue-800 bg-blue-50/50 ring-1 ring-inset ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/5 dark:text-blue-200">
+                      <InformationCircleIcon
+                        className="h-4 w-4 fill-blue-600 dark:fill-blue-200/50"
+                        aria-hidden="true"
+                      />
+                      <span className="font-semibold text-sm text-blue-700 dark:text-blue-500">
+                        Net Return on this margin is:
+                      </span>
+                      <span className="ml-2 font-bold text-xl">
+                        {netReturn}
+                      </span>
                     </div>
-                  ) : (
-                    <>
-                      <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
-                        <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
-                          Margin
+                    <div className="p-4 rounded-md text-emerald-800 bg-emerald-50/50 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">
+                      <h4 className="font-semibold text-sm text-emerald-700 dark:text-emerald-500">
+                        Price
+                      </h4>
+                      <p className="font-bold text-2xl">{displayInr(price)}</p>
+                    </div>
+                    {margin?.remarks === 'Insufficient Balance' ? (
+                      <div className="p-4 rounded-md text-red-800 bg-red-50/50 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
+                        <h4 className="font-semibold text-sm text-red-700 dark:text-red-500">
+                          Shortfall
                         </h4>
                         <p className="font-bold text-2xl">
-                          {margin
-                            ? displayInr(Number(margin.ordermargin))
-                            : '-'}
+                          {margin ? displayInr(Number(margin.marginused)) : '-'}
                         </p>
                       </div>
-                      <p className="col-span-2 text-right text-sm font-semibold">
-                        Remaining Cash:{' '}
-                        {displayInr(
-                          Number(margin?.cash) -
-                            Number(margin?.marginusedprev) -
-                            Number(margin?.ordermargin)
-                        )}
-                      </p>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
+                          <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
+                            Margin
+                          </h4>
+                          <p className="font-bold text-2xl">
+                            {margin
+                              ? displayInr(Number(margin.ordermargin))
+                              : '-'}
+                          </p>
+                        </div>
+                        <p className="col-span-2 text-right text-sm font-semibold">
+                          Remaining Cash:{' '}
+                          {displayInr(
+                            Number(margin?.cash) -
+                              Number(margin?.marginusedprev) -
+                              Number(margin?.ordermargin)
+                          )}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <SellerTable quote={quote} />
                 </div>
-                <div className="max-w-sm mx-auto grid grid-cols-[repeat(5,_auto)] place-items-center gap-x-4 gap-y-2 mb-16">
+                <div className="max-w-sm mx-auto grid grid-cols-[repeat(5,_auto)] place-items-center gap-2 px-4 mb-16">
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Lot Size
                   </span>
