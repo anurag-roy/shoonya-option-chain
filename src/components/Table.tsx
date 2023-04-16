@@ -28,17 +28,11 @@ export const Table = memo(({ name, expiry }: Props) => {
 
   useEffect(() => {
     if (name && expiry) {
-      console.log('Connecting websocket');
-
       const ws = new WebSocket(
         `ws://localhost:3000/api/wss?name=${encodeURIComponent(
           name
         )}&expiry=${encodeURIComponent(expiry)}`
       );
-
-      ws.onopen = () => {
-        console.log('Connected!');
-      };
 
       ws.onmessage = (event) => {
         const { action, data } = JSON.parse(event.data) as SocketData;
