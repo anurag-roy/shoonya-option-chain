@@ -59,6 +59,30 @@ if (!ws.value) {
           })
         );
         socketClient?.send(JSON.stringify(message));
+      } else {
+        let message: SocketData;
+        if (messageData.e === 'NSE' && 'lp' in messageData) {
+          message = {
+            action: 'ltp-update',
+            data: {
+              ltp: Number(messageData.lp),
+            },
+          };
+        } else {
+          message = {
+            action: 'option-update',
+            data: {
+              token: messageData.tk,
+            },
+          };
+          if ('bp1' in messageData) {
+            message.data.bid = Number(messageData.bp1);
+          }
+          if ('sp1' in messageData) {
+            message.data.ask = Number(messageData.sp1);
+          }
+        }
+        socketClient?.send(JSON.stringify(message));
       }
     } else if (messageData.t === 'tf') {
       const data = messageData as TouchlineResponse;
