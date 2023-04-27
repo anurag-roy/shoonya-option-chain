@@ -26,6 +26,7 @@ export const GROUPS = {
     'SAIL',
     'NTPC',
     'RECLTD',
+    'IRCTC',
   ],
   'Banking & Finance, Automotive & Spares': [
     'IBULHSGFIN',
@@ -55,6 +56,7 @@ export const GROUPS = {
     'DIVISLAB',
     'DRREDDY',
     'IPCALAB',
+    'CROMPTON',
   ],
 };
 
