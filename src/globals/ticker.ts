@@ -45,7 +45,7 @@ if (!ws.value) {
         return;
       }
 
-      if (!('oi' in messageData)) {
+      if (messageData.e === 'NFO' && !('oi' in messageData)) {
         let message: SocketData = {
           action: 'option-remove',
           data: {
@@ -55,7 +55,7 @@ if (!ws.value) {
         ws.value.send(
           JSON.stringify({
             t: 'u',
-            k: `${messageData.e}|${messageData.tk}`,
+            k: `NFO|${messageData.tk}`,
           })
         );
         socketClient?.send(JSON.stringify(message));
