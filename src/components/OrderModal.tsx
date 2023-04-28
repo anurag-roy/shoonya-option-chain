@@ -81,10 +81,10 @@ export const OrderModal = memo(
       <Transition.Root show={open} as={Fragment}>
         <Dialog
           as="td"
-          className="fixed z-10 inset-0 overflow-y-auto"
+          className="fixed inset-0 z-10 overflow-y-auto"
           onClose={setOpen}
         >
-          <div className="block min-h-screen max-w-[80vw] m-auto text-center">
+          <div className="m-auto block min-h-screen max-w-[80vw] text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -94,12 +94,12 @@ export const OrderModal = memo(
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-zinc-500 bg-opacity-75 dark:bg-zinc-800 dark:bg-opacity-75 transition-opacity" />
+              <Dialog.Overlay className="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity dark:bg-zinc-800 dark:bg-opacity-75" />
             </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span
-              className="inline-block align-middle h-screen"
+              className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
               &#8203;
@@ -113,10 +113,10 @@ export const OrderModal = memo(
               leaveFrom="opacity-100 translate-y-0 scale-100"
               leaveTo="opacity-0 translate-y-0 scale-95"
             >
-              <div className="min-w-[512px] relative inline-block align-middle bg-white dark:bg-zinc-900 rounded-lg p-6 text-left overflow-hidden shadow-xl transform transition-all my-8">
+              <div className="relative my-8 inline-block min-w-[512px] transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-zinc-900">
                 <Dialog.Title
                   as="div"
-                  className="-m-6 px-6 py-4 flex flex-row justify-between items-center mb-12 border-b border-zinc-500/20 bg-zinc-50 dark:bg-zinc-500/5"
+                  className="-m-6 mb-12 flex flex-row items-center justify-between border-b border-zinc-500/20 bg-zinc-50 px-6 py-4 dark:bg-zinc-500/5"
                 >
                   <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                     {i.symbol} {i.strikePrice} {i.optionType}{' '}
@@ -124,50 +124,50 @@ export const OrderModal = memo(
                   </h3>
                   <button
                     type="button"
-                    className="bg-transparent rounded-md text-zinc-400 hover:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="rounded-md bg-transparent text-zinc-400 hover:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </Dialog.Title>
-                <div className="flex gap-12 mb-8 items-start">
+                <div className="mb-8 flex items-start gap-12">
                   <BuyerTable quote={quote} />
-                  <div className="max-w-sm mx-auto grid grid-cols-[auto,_auto] gap-6">
-                    <div className="col-span-2 flex items-center gap-1 px-4 py-3 rounded-md text-blue-800 bg-blue-50/50 ring-1 ring-inset ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/5 dark:text-blue-200">
+                  <div className="mx-auto grid max-w-sm grid-cols-[auto,_auto] gap-6">
+                    <div className="col-span-2 flex items-center gap-1 rounded-md bg-blue-50/50 px-4 py-3 text-blue-800 ring-1 ring-inset ring-blue-700/20 dark:border-blue-500/30 dark:bg-blue-500/5 dark:text-blue-200">
                       <InformationCircleIcon
                         className="h-4 w-4 fill-blue-600 dark:fill-blue-200/50"
                         aria-hidden="true"
                       />
-                      <span className="font-semibold text-sm text-blue-700 dark:text-blue-500">
+                      <span className="text-sm font-semibold text-blue-700 dark:text-blue-500">
                         Net Return on this margin is:
                       </span>
-                      <span className="ml-2 font-bold text-xl">
+                      <span className="ml-2 text-xl font-bold">
                         {netReturn}
                       </span>
                     </div>
-                    <div className="p-4 rounded-md text-emerald-800 bg-emerald-50/50 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">
-                      <h4 className="font-semibold text-sm text-emerald-700 dark:text-emerald-500">
+                    <div className="rounded-md bg-emerald-50/50 p-4 text-emerald-800 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">
+                      <h4 className="text-sm font-semibold text-emerald-700 dark:text-emerald-500">
                         Price
                       </h4>
-                      <p className="font-bold text-2xl">{displayInr(price)}</p>
+                      <p className="text-2xl font-bold">{displayInr(price)}</p>
                     </div>
                     {margin?.remarks === 'Insufficient Balance' ? (
-                      <div className="p-4 rounded-md text-red-800 bg-red-50/50 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
-                        <h4 className="font-semibold text-sm text-red-700 dark:text-red-500">
+                      <div className="rounded-md bg-red-50/50 p-4 text-red-800 ring-1 ring-inset ring-red-700/20 dark:border-red-500/30 dark:bg-red-500/5 dark:text-red-200">
+                        <h4 className="text-sm font-semibold text-red-700 dark:text-red-500">
                           Shortfall
                         </h4>
-                        <p className="font-bold text-2xl">
+                        <p className="text-2xl font-bold">
                           {margin ? displayInr(Number(margin.marginused)) : '-'}
                         </p>
                       </div>
                     ) : (
                       <>
-                        <div className="p-4 rounded-md text-zinc-800 bg-zinc-50/50 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
-                          <h4 className="font-semibold text-sm text-zinc-700 dark:text-zinc-500">
+                        <div className="rounded-md bg-zinc-50/50 p-4 text-zinc-800 ring-1 ring-inset ring-zinc-700/20 dark:border-zinc-500/30 dark:bg-zinc-500/5 dark:text-zinc-200">
+                          <h4 className="text-sm font-semibold text-zinc-700 dark:text-zinc-500">
                             Margin
                           </h4>
-                          <p className="font-bold text-2xl">
+                          <p className="text-2xl font-bold">
                             {margin
                               ? displayInr(Number(margin.ordermargin))
                               : '-'}
@@ -186,7 +186,7 @@ export const OrderModal = memo(
                   </div>
                   <SellerTable quote={quote} />
                 </div>
-                <div className="max-w-sm mx-auto grid grid-cols-[repeat(5,_auto)] place-items-center gap-2 px-4 mb-16">
+                <div className="mx-auto mb-16 grid max-w-sm grid-cols-[repeat(5,_auto)] place-items-center gap-2 px-4">
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Lot Size
                   </span>
@@ -201,20 +201,20 @@ export const OrderModal = memo(
                   <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                     Total
                   </span>
-                  <span className="px-5 py-2 bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 rounded-md">
+                  <span className="rounded-md border border-zinc-300 bg-zinc-100 px-5 py-2 font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
                     {i.lotSize}
                   </span>
                   <span className="text-sm font-medium text-zinc-500">×</span>
                   <input
                     type="number"
                     name="quantity"
-                    className="w-24 dark:bg-zinc-800 shadow-sm focus:ring-blue-500 focus:border-blue-500 font-semibold text-center text-zinc-800 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700 rounded-md"
+                    className="w-24 rounded-md border-zinc-300 text-center font-semibold text-zinc-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
                     min={1}
                   />
                   <span className="text-sm font-medium text-zinc-500">=</span>
-                  <span className="px-5 py-2 bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 rounded-md">
+                  <span className="rounded-md border border-zinc-300 bg-zinc-100 px-5 py-2 font-semibold text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
                     {i.lotSize * quantity}
                   </span>
                 </div>
@@ -223,9 +223,9 @@ export const OrderModal = memo(
                     type="button"
                     disabled={margin?.remarks === 'Insufficient Balance'}
                     className={classNames(
-                      'inline-flex justify-center rounded-full border border-transparent shadow-sm px-6 py-2.5 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ml-3 w-auto',
+                      'ml-3 inline-flex w-auto justify-center rounded-full border border-transparent px-6 py-2.5 font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
                       margin?.remarks === 'Insufficient Balance'
-                        ? 'bg-zinc-700 pointer-events-none cursor-not-allowed'
+                        ? 'pointer-events-none cursor-not-allowed bg-zinc-700'
                         : 'bg-blue-600 hover:bg-blue-700'
                     )}
                     onClick={placeSellOrder}
@@ -234,7 +234,7 @@ export const OrderModal = memo(
                   </button>
                   <button
                     type="button"
-                    className="inline-flex justify-center rounded-full border border-zinc-300 dark:border-zinc-700 shadow-sm px-6 py-2.5 bg-white dark:bg-zinc-900 dark:text-zinc-400 font-medium text-zinc-700 hover:text-zinc-500 hover:dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mt-0 w-auto"
+                    className="mt-0 inline-flex w-auto justify-center rounded-full border border-zinc-300 bg-white px-6 py-2.5 font-medium text-zinc-700 shadow-sm hover:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 hover:dark:text-zinc-200"
                     onClick={() => setOpen(false)}
                   >
                     Cancel

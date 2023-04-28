@@ -68,7 +68,7 @@ export const Table = memo(({ name, expiry }: Props) => {
 
   return (
     <div>
-      <div className="p-2 flex items-baseline gap-4 text-zinc-900 dark:text-zinc-200">
+      <div className="flex items-baseline gap-4 p-2 text-zinc-900 dark:text-zinc-200">
         <h3 className="text-xl font-bold">{name}</h3>
         <span className="font-semibold">{ltp}</span>
         <span
@@ -82,9 +82,9 @@ export const Table = memo(({ name, expiry }: Props) => {
         </span>
         <p className="text-sm font-semibold"></p>
       </div>
-      <div className="resize-y max-h-[50vh] bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
+      <div className="max-h-[50vh] resize-y overflow-y-auto rounded-lg bg-white ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700">
         <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
-          <thead className="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
+          <thead className="sticky top-0 bg-zinc-50 dark:bg-zinc-800">
             <tr className="divide-x divide-zinc-200 dark:divide-white/10">
               <th scope="col">Strike</th>
               <th scope="col" className="min-w-[5ch]">
@@ -98,7 +98,7 @@ export const Table = memo(({ name, expiry }: Props) => {
               </th>
             </tr>
           </thead>
-          <tbody className="text-zinc-900 dark:text-zinc-100 divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-zinc-900 overflow-y-auto">
+          <tbody className="divide-y divide-zinc-200 overflow-y-auto bg-white text-zinc-900 dark:divide-white/10 dark:bg-zinc-900 dark:text-zinc-100">
             {filteredInstruments?.length === 0 ? (
               <tr>
                 <td colSpan={4}>No data to display.</td>

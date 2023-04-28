@@ -38,14 +38,14 @@ export function Main() {
   return (
     <main>
       <form
-        className="max-w-5xl mx-auto mt-6 rounded-lg py-6 bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10 flex items-end px-4 sm:px-6 lg:px-8 [&>*:first-child]:grow"
+        className="mx-auto mt-6 flex max-w-5xl items-end rounded-lg bg-zinc-50 px-4 py-6 ring-1 ring-zinc-200 dark:bg-white/5 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10 sm:px-6 lg:px-8 [&>*:first-child]:grow"
         onSubmit={handleFormSubmit}
       >
         <ComboBoxInput name="group" items={groupDropdownOptions} />
         <button
           type="button"
           onClick={() => setIsGroupDetailsOpen(!isGroupDetailsOpen)}
-          className="p-1 rounded-md mr-auto mb-1 ml-1"
+          className="mb-1 ml-1 mr-auto rounded-md p-1"
           title="Group Details"
         >
           <QuestionMarkCircleIcon className="h-6 w-6 text-zinc-400 hover:text-zinc-600" />
@@ -53,12 +53,12 @@ export function Main() {
         <ComboBoxInput name="expiry" items={expiryOptions} />
         <button
           type="submit"
-          className="ml-auto px-4 py-2 text-base font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="ml-auto rounded-full bg-blue-600 px-4 py-2 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
         </button>
       </form>
-      <div className="p-12 grid grid-cols-[repeat(_auto-fit,_minmax(360px,_1fr))] gap-12">
+      <div className="grid grid-cols-[repeat(_auto-fit,_minmax(360px,_1fr))] gap-12 p-12">
         {subscribedStocks.map((s) => (
           <Table key={s} name={s} expiry={expiry} />
         ))}

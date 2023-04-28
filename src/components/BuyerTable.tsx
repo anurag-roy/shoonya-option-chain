@@ -6,9 +6,9 @@ interface Props {
 
 export function BuyerTable({ quote }: Props) {
   return (
-    <div className="bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
+    <div className="overflow-y-auto rounded-lg bg-white ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700">
       <table className="divide-y divide-zinc-300 dark:divide-white/10">
-        <thead className="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
+        <thead className="sticky top-0 bg-zinc-50 dark:bg-zinc-800">
           <tr className="divide-x divide-zinc-200 dark:divide-white/10">
             <th scope="col" className="min-w-[100px]">
               Buyer
@@ -22,13 +22,13 @@ export function BuyerTable({ quote }: Props) {
           </tr>
         </thead>
         {quote === null ? (
-          <tbody className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 divide-y divide-zinc-200 dark:divide-white/10">
+          <tbody className="divide-y divide-zinc-200 bg-white text-zinc-900 dark:divide-white/10 dark:bg-zinc-900 dark:text-zinc-100">
             <tr>
               <td colSpan={4}>No data to display.</td>
             </tr>
           </tbody>
         ) : (
-          <tbody className="bg-blue-50/60 [&_td:not(:first-child)]:text-blue-800 dark:bg-blue-900/5 dark:[&_td:not(:first-child)]:text-blue-500 divide-y divide-zinc-200 dark:divide-white/10">
+          <tbody className="divide-y divide-zinc-200 bg-blue-50/60 dark:divide-white/10 dark:bg-blue-900/5 [&_td:not(:first-child)]:text-blue-800 dark:[&_td:not(:first-child)]:text-blue-500">
             <tr className="divide-x divide-zinc-200 dark:divide-white/10">
               <td className="bg-white dark:bg-zinc-900">Buyer 1</td>
               <td>{quote.bp1 ?? '-'}</td>

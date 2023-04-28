@@ -65,10 +65,10 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
+        className="fixed inset-0 z-10 overflow-y-auto"
         onClose={setOpen}
       >
-        <div className="block min-h-screen m-auto text-center">
+        <div className="m-auto block min-h-screen text-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -78,12 +78,12 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-zinc-500 bg-opacity-75 dark:bg-zinc-800 dark:bg-opacity-75 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-zinc-500 bg-opacity-75 transition-opacity dark:bg-zinc-800 dark:bg-opacity-75" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
           <span
-            className="inline-block align-middle h-screen"
+            className="inline-block h-screen align-middle"
             aria-hidden="true"
           >
             &#8203;
@@ -97,19 +97,19 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
             leaveFrom="opacity-100 translate-y-0 scale-100"
             leaveTo="opacity-0 translate-y-0 scale-95"
           >
-            <div className="relative inline-block align-middle bg-white dark:bg-zinc-900 rounded-lg px-12 py-6 text-left overflow-hidden shadow-xl transform transition-all my-8">
-              <p className="text-zinc-800 dark:text-zinc-300 text-center font-semibold text-2xl mb-16">
+            <div className="relative my-8 inline-block transform overflow-hidden rounded-lg bg-white px-12 py-6 text-left align-middle shadow-xl transition-all dark:bg-zinc-900">
+              <p className="mb-16 text-center text-2xl font-semibold text-zinc-800 dark:text-zinc-300">
                 Confirm TOTP to login
               </p>
               <form onSubmit={confirmTotp} method="post">
                 <div
-                  className="flex flex-row gap-3 mb-4 mx-auto w-fit"
+                  className="mx-auto mb-4 flex w-fit flex-row gap-3"
                   ref={inputContainerRef}
                 >
                   {digitIds.map((i) => (
                     <input
                       key={i.toString()}
-                      className="w-14 h-16 text-center px-4 hide-arrows outline-none rounded-xl border border-zinc-200 dark:border-zinc-600 text-lg dark:bg-zinc-800 focus:bg-zinc-50 focus:ring-1 ring-blue-700"
+                      className="hide-arrows h-16 w-14 rounded-xl border border-zinc-200 px-4 text-center text-lg outline-none ring-blue-700 focus:bg-zinc-50 focus:ring-1 dark:border-zinc-600 dark:bg-zinc-800"
                       type="number"
                       name={`otp-input-${i}`}
                       id={`otp-input-${i}`}
@@ -117,19 +117,19 @@ export function Login({ open, setOpen, setAuthStatus }: Props) {
                     />
                   ))}
                 </div>
-                <p className="text-center text-sm font-medium text-zinc-400 dark:text-zinc-500 mb-16">
+                <p className="mb-16 text-center text-sm font-medium text-zinc-400 dark:text-zinc-500">
                   Please enter the TOTP generated on your Authenticator app.
                 </p>
                 <button
                   type="submit"
-                  className="mx-auto flex justify-center rounded-full border border-transparent shadow-sm px-6 py-2 bg-blue-600 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm"
+                  className="mx-auto flex justify-center rounded-full border border-transparent bg-blue-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {buttonState === 'confirm' ? (
                     'Confirm'
                   ) : (
                     <>
                       <svg
-                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                        className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"

@@ -7,7 +7,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      className="flex p-1.5 items-center justify-center rounded-md transition bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10"
+      className="flex items-center justify-center rounded-md bg-zinc-50 p-1.5 ring-1 ring-zinc-200 transition dark:bg-white/5 dark:bg-zinc-800 dark:ring-1 dark:ring-white/10"
       aria-label="Toggle dark mode"
     >
       <svg
