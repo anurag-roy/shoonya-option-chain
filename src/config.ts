@@ -48,7 +48,6 @@ export const GROUPS = {
     'OFSS',
     'DELTACORP',
     'BRITANNIA',
-    'ITC',
     'BATAINDIA',
     'LAURUSLABS',
     'VOLTAS',
@@ -58,6 +57,7 @@ export const GROUPS = {
     'IPCALAB',
     'CROMPTON',
   ],
+  Extras: ['INDUSTOWER', 'ICICIBANK', 'ITC', 'GUJGASTLD', 'INDIACEM'],
 };
 
 // Number of months to show in the expiry dropdown
