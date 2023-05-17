@@ -61,7 +61,7 @@ export const GROUPS = {
     'INDUSTOWER',
     'ICICIBANK',
     'ITC',
-    'GUJGASTLD',
+    'GUJGASLTD',
     'INDIACEM',
     'ASTRAL',
     'INTELLECT',
