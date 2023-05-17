@@ -57,7 +57,15 @@ export const GROUPS = {
     'IPCALAB',
     'CROMPTON',
   ],
-  Extras: ['INDUSTOWER', 'ICICIBANK', 'ITC', 'GUJGASTLD', 'INDIACEM'],
+  Extras: [
+    'INDUSTOWER',
+    'ICICIBANK',
+    'ITC',
+    'GUJGASTLD',
+    'INDIACEM',
+    'ASTRAL',
+    'INTELLECT',
+  ],
 };
 
 // Number of months to show in the expiry dropdown
