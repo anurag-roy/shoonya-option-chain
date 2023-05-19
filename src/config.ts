@@ -40,6 +40,7 @@ export const GROUPS = {
     'PFC',
     'RBLBANK',
     'BANDHANBNK',
+    'AUBANK',
     'MOTHERSON',
     'MRF',
     'MARUTI',
@@ -65,6 +66,7 @@ export const GROUPS = {
     'INDIACEM',
     'ASTRAL',
     'INTELLECT',
+    'JUBLFOOD',
   ],
 };
 
