@@ -11,6 +11,7 @@ export const GROUPS = {
     'PETRONET',
     'DIXON',
     'ASIANPAINT',
+    'CUMMINSIND',
   ],
   'Heavy Industries (Public)': [
     'BHEL',
@@ -49,6 +50,9 @@ export const GROUPS = {
     'OFSS',
     'DELTACORP',
     'BRITANNIA',
+    'ITC',
+    'JUBLFOOD',
+    'NESTLEIND',
     'BATAINDIA',
     'LAURUSLABS',
     'VOLTAS',
@@ -60,13 +64,11 @@ export const GROUPS = {
   ],
   Extras: [
     'INDUSTOWER',
-    'ICICIBANK',
-    'ITC',
     'GUJGASLTD',
     'INDIACEM',
     'ASTRAL',
     'INTELLECT',
-    'JUBLFOOD',
+    'PAGEIND',
   ],
 };
 
