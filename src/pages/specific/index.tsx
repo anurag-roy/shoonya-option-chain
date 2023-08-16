@@ -1,15 +1,15 @@
+import { ComboBoxInput } from '@/components/ComboBoxInput';
+import { GroupDetails } from '@/components/GroupDetails';
+import { Table } from '@/components/Table';
 import { GROUPS } from '@/config';
 import { getExpiryOptions, getKeys } from '@/utils/ui';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
 import { FormEvent, useState } from 'react';
-import { ComboBoxInput } from './ComboBoxInput';
-import { GroupDetails } from './GroupDetails';
-import { Table } from './Table';
 
 const groupDropdownOptions = getKeys(GROUPS);
 const expiryOptions = getExpiryOptions();
 
-export function Main() {
+export function Specific() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribedStocks, setSubscribedStocks] = useState<string[]>([]);
   const [expiry, setExpiry] = useState<string>('');
