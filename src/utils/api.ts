@@ -1,3 +1,4 @@
+import { STOCKS_TO_INCLUDE } from '@/config';
 import env from '@/env.json';
 import { Quotes, ShoonyaInstrument } from '@/types/shoonya';
 import JSZip from 'jszip';
@@ -59,7 +60,7 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
         tickSize,
       ] = row.split(',');
 
-      if (instrument === 'EQ') {
+      if (instrument === 'EQ' && STOCKS_TO_INCLUDE.includes(symbol)) {
         output.push({
           exchange,
           token,
@@ -87,7 +88,10 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
         tickSize,
       ] = row.split(',');
 
-      if (optionType === 'CE' || optionType === 'PE') {
+      if (
+        (optionType === 'CE' || optionType === 'PE') &&
+        STOCKS_TO_INCLUDE.includes(symbol)
+      ) {
         output.push({
           exchange,
           token,
