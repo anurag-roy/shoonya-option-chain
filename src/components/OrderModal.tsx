@@ -1,4 +1,4 @@
-import { UiInstrument } from '@/types';
+import { AllInstrument, UiInstrument } from '@/types';
 import { MarginResponse, Quotes } from '@/types/shoonya';
 import { classNames, displayInr } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
@@ -17,7 +17,7 @@ import { SellerTable } from './SellerTable';
 interface Props {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  i: UiInstrument;
+  i: UiInstrument | AllInstrument;
   price: number;
 }
 
