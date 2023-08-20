@@ -9,7 +9,7 @@ import { FormEvent, useState } from 'react';
 const groupDropdownOptions = getKeys(GROUPS);
 const expiryOptions = getExpiryOptions();
 
-export function Specific() {
+export default function () {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribedStocks, setSubscribedStocks] = useState<string[]>([]);
   const [expiry, setExpiry] = useState<string>('');

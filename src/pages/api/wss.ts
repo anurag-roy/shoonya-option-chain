@@ -75,7 +75,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
       }
       // Store the equity instrument as well
       tokenMap.set(equityStock.token, name);
-      subscriptionMap.set(equityStock.token, `NSO|${equityStock.token}`);
+      subscriptionMap.set(equityStock.token, `NSE|${equityStock.token}`);
 
       // Send client init data
       client.send(
