@@ -8,6 +8,7 @@ import { AuthStatus } from '@/types';
 import { injectTokenIntoEnv } from '@/utils/api';
 import { getExpiryOptions, getKeys } from '@/utils/ui';
 import { QuestionMarkCircleIcon } from '@heroicons/react/24/solid';
+import Head from 'next/head';
 import { FormEvent, useState } from 'react';
 
 const groupDropdownOptions = getKeys(GROUPS);
@@ -67,6 +68,11 @@ export default function ({ status }: Props) {
 
   return (
     <>
+      <Head>
+        <title>Specific - Option Chain (Equity Derivatives)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Header status={status} />
       <main>
         <form

@@ -4,6 +4,7 @@ import { Header } from '@/components/Header';
 import { AuthStatus } from '@/types';
 import { injectTokenIntoEnv } from '@/utils/api';
 import { getExpiryOptions } from '@/utils/ui';
+import Head from 'next/head';
 import { FormEvent, useState } from 'react';
 
 const expiryOptions = getExpiryOptions();
@@ -52,6 +53,11 @@ export default function ({ status }: Props) {
 
   return (
     <>
+      <Head>
+        <title>All - Option Chain (Equity Derivatives)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Header status={status} />
       <main>
         <form

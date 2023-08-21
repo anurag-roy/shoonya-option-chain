@@ -57,7 +57,9 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
       <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
         <thead className="sticky top-0 bg-zinc-50 dark:bg-zinc-800">
           <tr className="divide-x divide-zinc-200 dark:divide-white/10">
-            <th scope="col">Option</th>
+            <th scope="col" className="pl-8 text-left">
+              Option
+            </th>
             <th scope="col">Buyer Price</th>
             <th scope="col">Total Value</th>
           </tr>

@@ -186,6 +186,16 @@ export const STOCKS_TO_INCLUDE = [
   'ZYDUSLIFE',
 ];
 
+export const CUSTOM_PERCENT: Record<string, number> = {
+  ADANIENT: 44,
+  ADANIPORTS: 44,
+  BOSCHLTD: 28,
+  EXIDEIND: 22,
+  MRF: 22,
+  NESTLEIND: 28,
+  PAGEIND: 28,
+};
+
 // Groups and stocks to monitor when that group is selected
 export const GROUPS = {
   'Adani & Tata, Heavy Industries (Private)': [

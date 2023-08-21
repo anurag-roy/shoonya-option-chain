@@ -1,6 +1,7 @@
 import { AuthStatus } from '@/types';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import { useState } from 'react';
 import { Login } from './Login';
 import { NseLogo } from './icons/NseLogo';
@@ -49,10 +50,12 @@ export function Header({ status }: Props) {
 
   return (
     <header className="mx-auto flex w-full max-w-5xl items-center gap-2">
-      <NseLogo />
-      <h1 className="mr-auto text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-        Option Chain
-      </h1>
+      <Link href="/" className="mr-auto flex items-center gap-2">
+        <NseLogo />
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          Option Chain
+        </h1>
+      </Link>
       <ThemeToggle />
       {authStatus === 'authorized' ? (
         <span className="ml-2 inline-flex items-center rounded-md border border-transparent bg-emerald-50/50 px-4 py-2 text-sm font-medium leading-4 text-emerald-800 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">

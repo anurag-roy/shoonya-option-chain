@@ -1,9 +1,13 @@
-import { STOCKS_TO_INCLUDE } from '@/config';
+import { CUSTOM_PERCENT, STOCKS_TO_INCLUDE } from '@/config';
 import { AllSocketData } from '@/types';
 import { TouchlineResponse } from '@/types/shoonya';
 import { getQuotes } from '@/utils/api';
 import { getInstrumentsToSubscribe } from '@/utils/db';
-import { getNewTicker, getValidInstruments } from '@/utils/socket';
+import {
+  getNewTicker,
+  getValidInstruments,
+  subscribeToTokens,
+} from '@/utils/socket';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';
 import { MessageEvent } from 'ws';
@@ -53,14 +57,13 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         // Get LTP to calculate lower bound and upper bound
         const response = await getQuotes('NSE', equityStock.token);
         const ltp = Number(response.lp);
-        const lowerBound =
-          equityStock.symbol === 'ADANIENT'
-            ? 0.5 * ltp
-            : ((100 - 0.75 * percent) * ltp) / 100;
-        const upperBound =
-          equityStock.symbol === 'ADANIENT'
-            ? 1.5 * ltp
-            : ((100 + 0.75 * percent) * ltp) / 100;
+        console.log(`LTP for ${stockName} is`, ltp);
+
+        const effectivePercent = CUSTOM_PERCENT[stockName] ?? percent;
+        const lowerBound = ((100 - effectivePercent) * ltp) / 100;
+        const upperBound = ((100 + effectivePercent) * ltp) / 100;
+        console.log('Lowerbound:', lowerBound);
+        console.log('Upperbound:', upperBound);
 
         // Compute filtered stocks to send the scoket client
         const validInstruments = await getValidInstruments(
@@ -85,10 +88,10 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           })
         );
         console.timeEnd(stockName);
-        // subscribeToTokens(
-        //   validInstruments.map((i) => `NFO|${i.token}`),
-        //   ws
-        // );
+        subscribeToTokens(
+          validInstruments.map((i) => `NFO|${i.token}`),
+          ws
+        );
       }
 
       tempWs.close();
