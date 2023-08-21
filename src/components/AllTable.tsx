@@ -4,23 +4,27 @@ import { AllTableRow } from './AllTableRow';
 
 type Props = {
   expiry: string;
+  percent: number;
+  entryValue: number;
 };
 
-export const AllTable = memo(({ expiry }: Props) => {
+export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
   const [instruments, setInstruments] = useState<AllInstrument[]>([]);
 
   useEffect(() => {
     if (expiry) {
       const ws = new WebSocket(
-        `ws://localhost:3000/api/wss?name=all&expiry=${encodeURIComponent(
+        `ws://localhost:3000/api/allWss?expiry=${encodeURIComponent(
           expiry
-        )}`
+        )}&percent=${percent}&entryValue=${entryValue}`
       );
 
       ws.onmessage = (event) => {
         const { action, data } = JSON.parse(event.data) as AllSocketData;
         if (action === 'init') {
-          setInstruments(data.options);
+          setInstruments((instruments) =>
+            [...instruments, ...data.options].sort((a, b) => b.value - a.value)
+          );
         } else if (action === 'option-update') {
           setInstruments((instruments) =>
             instruments
@@ -49,7 +53,7 @@ export const AllTable = memo(({ expiry }: Props) => {
   }, []);
 
   return (
-    <div className="max-h-[50vh] resize-y overflow-y-auto rounded-lg bg-white ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700">
+    <div className="mx-auto mt-8 max-h-[50vh] max-w-5xl resize-y overflow-y-auto rounded-lg bg-white ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700">
       <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
         <thead className="sticky top-0 bg-zinc-50 dark:bg-zinc-800">
           <tr className="divide-x divide-zinc-200 dark:divide-white/10">

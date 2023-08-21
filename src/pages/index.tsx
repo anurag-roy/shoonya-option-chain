@@ -1,7 +1,6 @@
 import { Header } from '@/components/Header';
 import { AllIcon } from '@/components/icons/AllIcon';
 import { SpecificIcon } from '@/components/icons/SpecificIcon';
-import { ticker } from '@/globals';
 import { AuthStatus } from '@/types';
 import { injectTokenIntoEnv } from '@/utils/api';
 import Head from 'next/head';
@@ -18,8 +17,8 @@ export async function getServerSideProps() {
   }
 
   // Call ticker here to init
-  if (ticker) {
-  }
+  // if (ticker) {
+  // }
 
   return {
     props: {

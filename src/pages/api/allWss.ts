@@ -16,9 +16,9 @@ export const socket: NextWebSocketHandler = async (client, req) => {
     const url = new URL(req.url, 'http://localhost:3000');
     const expiry = url.searchParams.get('expiry');
     const percent = Number(url.searchParams.get('percent'));
-    const entryPrice = Number(url.searchParams.get('entryPrice'));
+    const entryValue = Number(url.searchParams.get('entryValue'));
 
-    if (expiry && !Number.isNaN(percent) && !Number.isNaN(entryPrice)) {
+    if (expiry && !Number.isNaN(percent) && !Number.isNaN(entryValue)) {
       const ws = await getNewTicker();
       ws.onmessage = (messageEvent: MessageEvent) => {
         const messageData = JSON.parse(messageEvent.data as string);
@@ -68,7 +68,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         const validInstruments = await getValidInstruments(
           tempWs,
           optionsStocks,
-          entryPrice,
+          entryValue,
           lowerBound,
           upperBound
         );
