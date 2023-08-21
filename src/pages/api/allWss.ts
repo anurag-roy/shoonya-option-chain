@@ -3,13 +3,10 @@ import { AllSocketData } from '@/types';
 import { TouchlineResponse } from '@/types/shoonya';
 import { getQuotes } from '@/utils/api';
 import { getInstrumentsToSubscribe } from '@/utils/db';
-import {
-  getNewTicker,
-  getValidInstruments,
-  subscribeToTokens,
-} from '@/utils/socket';
+import { getNewTicker, getValidInstruments } from '@/utils/socket';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';
+import { MessageEvent } from 'ws';
 
 export const socket: NextWebSocketHandler = async (client, req) => {
   if (req.url) {
@@ -47,6 +44,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
 
       // Get initial stocks from DB
       for (const stockName of STOCKS_TO_INCLUDE) {
+        console.time(stockName);
         const { equityStock, optionsStocks } = await getInstrumentsToSubscribe(
           stockName,
           expiry
@@ -72,6 +70,10 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           lowerBound,
           upperBound
         );
+        console.log(
+          `Valid instruments for ${stockName}: `,
+          validInstruments.length
+        );
 
         // Send client init data
         client.send(
@@ -82,10 +84,11 @@ export const socket: NextWebSocketHandler = async (client, req) => {
             },
           })
         );
-        subscribeToTokens(
-          validInstruments.map((i) => `NFO|${i.token}`),
-          ws
-        );
+        console.timeEnd(stockName);
+        // subscribeToTokens(
+        //   validInstruments.map((i) => `NFO|${i.token}`),
+        //   ws
+        // );
       }
 
       tempWs.close();

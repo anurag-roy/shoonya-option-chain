@@ -16,10 +16,6 @@ export async function getServerSideProps() {
     };
   }
 
-  // Call ticker here to init
-  // if (ticker) {
-  // }
-
   return {
     props: {
       status: 'authorized',

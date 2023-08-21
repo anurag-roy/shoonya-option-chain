@@ -3,6 +3,7 @@ import { ticker } from '@/globals/ticker';
 import { AllInstrument } from '@/types';
 import { TouchlineResponse } from '@/types/shoonya';
 import { instrument } from '@prisma/client';
+import { MessageEvent, WebSocket } from 'ws';
 
 export const sendConnectMessage = () => {
   if (ticker.OPEN) {
@@ -81,17 +82,34 @@ export const getValidInstruments = async (
     let responseReceived = 0;
     const validInstruments: AllInstrument[] = [];
 
-    const tokensToSubscribe = instruments
-      .filter(
-        (s) =>
-          (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
-          (s.strikePrice >= upperBound && s.optionType === 'CE')
-      )
+    const filteredInstruments = instruments.filter(
+      (s) =>
+        (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
+        (s.strikePrice >= upperBound && s.optionType === 'CE')
+    );
+    const tokensToSubscribe = filteredInstruments
       .map((s) => `NFO|${s.token}`)
       .join('#');
 
-    ws.onmessage = (messageEvent: MessageEvent<string>) => {
-      const messageData = JSON.parse(messageEvent.data) as TouchlineResponse;
+    // Timeout after 3 secsonds, because sometimes Shoonya doesn't return an
+    // acknowledgement for all the tokens
+    const timeout = setTimeout(() => {
+      ws.send(
+        JSON.stringify({
+          t: 'u',
+          k: tokensToSubscribe,
+        })
+      );
+      console.log(
+        `Resolving via timeout. Response received for ${responseReceived}/${filteredInstruments.length} tokens.`
+      );
+      resolve(validInstruments);
+    }, 3000);
+
+    ws.onmessage = (messageEvent: MessageEvent) => {
+      const messageData = JSON.parse(
+        messageEvent.data as string
+      ) as TouchlineResponse;
 
       if (messageData.t === 'tk') {
         if ('oi' in messageData && messageData.bp1) {
@@ -108,13 +126,17 @@ export const getValidInstruments = async (
             });
         }
         responseReceived++;
-        if (responseReceived === instruments.length) {
+        if (responseReceived === filteredInstruments.length) {
           ws.send(
             JSON.stringify({
               t: 'u',
               k: tokensToSubscribe,
             })
           );
+          console.log(
+            `Received responses for all ${filteredInstruments.length} tokens. Resolving.`
+          );
+          clearTimeout(timeout);
           resolve(validInstruments);
         }
       }
