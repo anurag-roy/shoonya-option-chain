@@ -317,7 +317,7 @@ export type TouchlineResponse = {
   /**
    * Open interest
    */
-  oi: string;
+  oi?: string;
   /**
    * Previous day closing Open Interest
    */

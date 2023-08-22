@@ -19,6 +19,8 @@ export const socket: NextWebSocketHandler = async (client, req) => {
     const percent = Number(url.searchParams.get('percent'));
     const entryValue = Number(url.searchParams.get('entryValue'));
 
+    const tokenToLotSizeMap = new Map<string, number>();
+
     if (expiry && !Number.isNaN(percent) && !Number.isNaN(entryValue)) {
       const ws = await getNewTicker();
       ws.onmessage = (messageEvent: MessageEvent) => {
@@ -27,14 +29,30 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           const data = messageData as TouchlineResponse;
 
           if ('bp1' in data) {
-            const message: AllSocketData = {
-              action: 'option-update',
-              data: {
-                token: data.tk,
-                bid: Number(data.bp1),
-              },
-            };
-            client.send(JSON.stringify(message));
+            const bid = Number(data.bp1);
+            const lotSize = tokenToLotSizeMap.get(data.tk);
+            if (lotSize) {
+              const value = (bid - 0.05) * lotSize;
+              if (value > entryValue) {
+                const message: AllSocketData = {
+                  action: 'option-update',
+                  data: {
+                    token: data.tk,
+                    bid: Number(data.bp1),
+                    value: value,
+                  },
+                };
+                client.send(JSON.stringify(message));
+              } else {
+                const message: AllSocketData = {
+                  action: 'option-remove',
+                  data: {
+                    token: data.tk,
+                  },
+                };
+                client.send(JSON.stringify(message));
+              }
+            }
           }
         }
       };
@@ -66,7 +84,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         console.log('Upperbound:', upperBound);
 
         // Compute filtered stocks to send the scoket client
-        const validInstruments = await getValidInstruments(
+        const { validTokens, initialInstruments } = await getValidInstruments(
           tempWs,
           optionsStocks,
           entryValue,
@@ -74,8 +92,8 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           upperBound
         );
         console.log(
-          `Valid instruments for ${stockName}: `,
-          validInstruments.length
+          `Initial instruments for ${stockName}: `,
+          initialInstruments.length
         );
 
         // Send client init data
@@ -83,15 +101,18 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           JSON.stringify({
             action: 'init',
             data: {
-              options: validInstruments,
+              options: initialInstruments,
             },
           })
         );
-        console.timeEnd(stockName);
         subscribeToTokens(
-          validInstruments.map((i) => `NFO|${i.token}`),
+          validTokens.map((t) => `NFO|${t}`),
           ws
         );
+        validTokens.forEach((t) =>
+          tokenToLotSizeMap.set(t, optionsStocks[0].lotSize)
+        );
+        console.timeEnd(stockName);
       }
 
       tempWs.close();

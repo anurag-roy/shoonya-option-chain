@@ -78,74 +78,82 @@ export const getValidInstruments = async (
   lowerBound: number,
   upperBound: number
 ) =>
-  new Promise<AllInstrument[]>((resolve) => {
-    let responseReceived = 0;
-    const validInstruments: AllInstrument[] = [];
+  new Promise<{ validTokens: string[]; initialInstruments: AllInstrument[] }>(
+    (resolve) => {
+      let responseReceived = 0;
+      const initialInstruments: AllInstrument[] = [];
 
-    const filteredInstruments = instruments.filter(
-      (s) =>
-        (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
-        (s.strikePrice >= upperBound && s.optionType === 'CE')
-    );
-    const tokensToSubscribe = filteredInstruments
-      .map((s) => `NFO|${s.token}`)
-      .join('#');
+      const filteredInstruments = instruments.filter(
+        (s) =>
+          (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
+          (s.strikePrice >= upperBound && s.optionType === 'CE')
+      );
+      const validTokens: string[] = filteredInstruments.map((i) => i.token);
+      const tokensToSubscribe = filteredInstruments
+        .map((s) => `NFO|${s.token}`)
+        .join('#');
 
-    // Timeout after 3 secsonds, because sometimes Shoonya doesn't return an
-    // acknowledgement for all the tokens
-    const timeout = setTimeout(() => {
+      // Timeout after 3 secsonds, because sometimes Shoonya doesn't return an
+      // acknowledgement for all the tokens
+      const timeout = setTimeout(() => {
+        ws.send(
+          JSON.stringify({
+            t: 'u',
+            k: tokensToSubscribe,
+          })
+        );
+        console.log(
+          `Resolving via timeout. Response received for ${responseReceived}/${filteredInstruments.length} tokens.`
+        );
+        resolve({ validTokens, initialInstruments });
+      }, 3000);
+
+      ws.onmessage = (messageEvent: MessageEvent) => {
+        const messageData = JSON.parse(
+          messageEvent.data as string
+        ) as TouchlineResponse;
+
+        if (messageData.t === 'tk') {
+          if (!('oi' in messageData)) {
+            const foundIndex = validTokens.findIndex(
+              (t) => t === messageData.tk
+            );
+            validTokens.splice(foundIndex, 1);
+          } else if (messageData.bp1) {
+            const foundInstrument = instruments.find(
+              (i) => i.token === messageData.tk
+            )!;
+            const value =
+              (Number(messageData.bp1) - 0.05) * foundInstrument.lotSize;
+            if (value > entryValue)
+              initialInstruments.push({
+                ...foundInstrument,
+                bid: Number(messageData.bp1),
+                value,
+              });
+          }
+          responseReceived++;
+          if (responseReceived === filteredInstruments.length) {
+            ws.send(
+              JSON.stringify({
+                t: 'u',
+                k: tokensToSubscribe,
+              })
+            );
+            console.log(
+              `Received responses for all ${filteredInstruments.length} tokens. Resolving.`
+            );
+            clearTimeout(timeout);
+            resolve({ validTokens, initialInstruments });
+          }
+        }
+      };
+
       ws.send(
         JSON.stringify({
-          t: 'u',
+          t: 't',
           k: tokensToSubscribe,
         })
       );
-      console.log(
-        `Resolving via timeout. Response received for ${responseReceived}/${filteredInstruments.length} tokens.`
-      );
-      resolve(validInstruments);
-    }, 3000);
-
-    ws.onmessage = (messageEvent: MessageEvent) => {
-      const messageData = JSON.parse(
-        messageEvent.data as string
-      ) as TouchlineResponse;
-
-      if (messageData.t === 'tk') {
-        if ('oi' in messageData && messageData.bp1) {
-          const foundInstrument = instruments.find(
-            (i) => i.token === messageData.tk
-          )!;
-          const value =
-            (Number(messageData.bp1) - 0.05) * foundInstrument.lotSize;
-          if (value > entryValue)
-            validInstruments.push({
-              ...foundInstrument,
-              bid: Number(messageData.bp1),
-              value,
-            });
-        }
-        responseReceived++;
-        if (responseReceived === filteredInstruments.length) {
-          ws.send(
-            JSON.stringify({
-              t: 'u',
-              k: tokensToSubscribe,
-            })
-          );
-          console.log(
-            `Received responses for all ${filteredInstruments.length} tokens. Resolving.`
-          );
-          clearTimeout(timeout);
-          resolve(validInstruments);
-        }
-      }
-    };
-
-    ws.send(
-      JSON.stringify({
-        t: 't',
-        k: tokensToSubscribe,
-      })
-    );
-  });
+    }
+  );

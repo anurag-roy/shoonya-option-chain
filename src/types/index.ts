@@ -54,6 +54,7 @@ export type AllSocketData =
       data: {
         token: string;
         bid: number;
+        value: number;
       };
     }
   | {

@@ -191,7 +191,7 @@ export const CUSTOM_PERCENT: Record<string, number> = {
   ADANIPORTS: 44,
   BOSCHLTD: 28,
   EXIDEIND: 22,
-  MRF: 22,
+  MRF: 15,
   NESTLEIND: 28,
   PAGEIND: 28,
 };

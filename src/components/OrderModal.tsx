@@ -33,7 +33,10 @@ export const OrderModal = memo(
         const marginParams = new URLSearchParams();
         marginParams.append('price', price.toString());
         marginParams.append('quantity', (quantity * i.lotSize).toString());
-        marginParams.append('tradingSymbol', i.tradingSymbol);
+        marginParams.append(
+          'tradingSymbol',
+          encodeURIComponent(i.tradingSymbol)
+        );
         fetch('/api/getMargin?' + marginParams.toString())
           .then((res) => res.json())
           .then((margin) => setMargin(margin));
