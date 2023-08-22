@@ -1,6 +1,7 @@
 import { UiInstrument } from '@/types';
 import { classNames } from '@/utils/ui';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { OrderModal } from './OrderModal';
 
 type Props = {
@@ -48,14 +49,16 @@ export const TableRow = ({ i }: Props) => {
       >
         {value}
       </td>
-      {isOrderModalOpen && (
-        <OrderModal
-          open={isOrderModalOpen}
-          setOpen={setIsOrderModalOpen}
-          i={i}
-          price={i.bid}
-        />
-      )}
+      {isOrderModalOpen &&
+        createPortal(
+          <OrderModal
+            open={isOrderModalOpen}
+            setOpen={setIsOrderModalOpen}
+            i={i}
+            price={i.bid}
+          />,
+          document.body
+        )}
     </tr>
   );
 };

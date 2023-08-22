@@ -1,4 +1,4 @@
-import { UiInstrument } from '@/types';
+import { AllInstrument, UiInstrument } from '@/types';
 import { MarginResponse, Quotes } from '@/types/shoonya';
 import { classNames, displayInr } from '@/utils/ui';
 import { Dialog, Transition } from '@headlessui/react';
@@ -17,7 +17,7 @@ import { SellerTable } from './SellerTable';
 interface Props {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  i: UiInstrument;
+  i: UiInstrument | AllInstrument;
   price: number;
 }
 
@@ -33,7 +33,10 @@ export const OrderModal = memo(
         const marginParams = new URLSearchParams();
         marginParams.append('price', price.toString());
         marginParams.append('quantity', (quantity * i.lotSize).toString());
-        marginParams.append('tradingSymbol', i.tradingSymbol);
+        marginParams.append(
+          'tradingSymbol',
+          encodeURIComponent(i.tradingSymbol)
+        );
         fetch('/api/getMargin?' + marginParams.toString())
           .then((res) => res.json())
           .then((margin) => setMargin(margin));
@@ -80,7 +83,6 @@ export const OrderModal = memo(
     return (
       <Transition.Root show={open} as={Fragment}>
         <Dialog
-          as="td"
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={setOpen}
         >
@@ -208,6 +210,7 @@ export const OrderModal = memo(
                   <input
                     type="number"
                     name="quantity"
+                    id="quantity"
                     className="w-24 rounded-md border-zinc-300 text-center font-semibold text-zinc-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}

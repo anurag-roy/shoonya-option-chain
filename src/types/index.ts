@@ -7,6 +7,11 @@ export interface UiInstrument extends instrument {
   ask: number;
 }
 
+export interface AllInstrument extends instrument {
+  bid: number;
+  value: number;
+}
+
 export type SocketData =
   | {
       action: 'init';
@@ -28,6 +33,28 @@ export type SocketData =
         token: string;
         bid?: number;
         ask?: number;
+      };
+    }
+  | {
+      action: 'option-remove';
+      data: {
+        token: string;
+      };
+    };
+
+export type AllSocketData =
+  | {
+      action: 'init';
+      data: {
+        options: AllInstrument[];
+      };
+    }
+  | {
+      action: 'option-update';
+      data: {
+        token: string;
+        bid: number;
+        value: number;
       };
     }
   | {

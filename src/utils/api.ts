@@ -1,11 +1,9 @@
-import { GROUPS } from '@/config';
+import { STOCKS_TO_INCLUDE } from '@/config';
 import env from '@/env.json';
 import { Quotes, ShoonyaInstrument } from '@/types/shoonya';
 import JSZip from 'jszip';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-
-const allowedStocks = Object.values(GROUPS).flatMap((s) => s);
 
 export const injectTokenIntoEnv = async (token?: string) => {
   if (token) {
@@ -62,7 +60,7 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
         tickSize,
       ] = row.split(',');
 
-      if (instrument === 'EQ' && allowedStocks.includes(symbol)) {
+      if (instrument === 'EQ' && STOCKS_TO_INCLUDE.includes(symbol)) {
         output.push({
           exchange,
           token,
@@ -92,7 +90,7 @@ export const getInstruments = async (forExchange: 'NSE' | 'NFO') => {
 
       if (
         (optionType === 'CE' || optionType === 'PE') &&
-        allowedStocks.includes(symbol)
+        STOCKS_TO_INCLUDE.includes(symbol)
       ) {
         output.push({
           exchange,
