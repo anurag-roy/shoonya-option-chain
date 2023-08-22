@@ -83,7 +83,6 @@ export const OrderModal = memo(
     return (
       <Transition.Root show={open} as={Fragment}>
         <Dialog
-          as="td"
           className="fixed inset-0 z-10 overflow-y-auto"
           onClose={setOpen}
         >
@@ -211,6 +210,7 @@ export const OrderModal = memo(
                   <input
                     type="number"
                     name="quantity"
+                    id="quantity"
                     className="w-24 rounded-md border-zinc-300 text-center font-semibold text-zinc-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}

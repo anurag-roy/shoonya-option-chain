@@ -1,6 +1,7 @@
 import { AllInstrument, AllSocketData } from '@/types';
 import { memo, useEffect, useState } from 'react';
 import { AllTableRow } from './AllTableRow';
+import { OrderModal } from './OrderModal';
 
 type Props = {
   expiry: string;
@@ -10,6 +11,9 @@ type Props = {
 
 export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
   const [instruments, setInstruments] = useState<AllInstrument[]>([]);
+  const [selectedStock, setSelectedStock] = useState<AllInstrument | null>(
+    null
+  );
 
   useEffect(() => {
     if (expiry) {
@@ -70,10 +74,24 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
               <td colSpan={3}>No data to display.</td>
             </tr>
           ) : (
-            instruments.map((i) => <AllTableRow key={i.token} i={i} />)
+            instruments.map((i) => (
+              <AllTableRow
+                key={i.token}
+                i={i}
+                onClick={() => setSelectedStock(i)}
+              />
+            ))
           )}
         </tbody>
       </table>
+      {selectedStock && (
+        <OrderModal
+          open={Boolean(selectedStock)}
+          setOpen={() => setSelectedStock(null)}
+          i={selectedStock}
+          price={selectedStock.bid}
+        />
+      )}
     </div>
   );
 });
