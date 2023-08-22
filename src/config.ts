@@ -205,7 +205,7 @@ export const GROUPS = {
     'TATASTEEL',
     'ADANIENT',
     'VEDL',
-    'RAIN',
+    // 'RAIN',
     'PETRONET',
     'DIXON',
     'ASIANPAINT',
