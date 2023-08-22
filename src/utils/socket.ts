@@ -102,9 +102,6 @@ export const getValidInstruments = async (
             k: tokensToSubscribe,
           })
         );
-        console.log(
-          `Resolving via timeout. Response received for ${responseReceived}/${filteredInstruments.length} tokens.`
-        );
         resolve({ validTokens, initialInstruments });
       }, 3000);
 
@@ -139,9 +136,6 @@ export const getValidInstruments = async (
                 t: 'u',
                 k: tokensToSubscribe,
               })
-            );
-            console.log(
-              `Received responses for all ${filteredInstruments.length} tokens. Resolving.`
             );
             clearTimeout(timeout);
             resolve({ validTokens, initialInstruments });

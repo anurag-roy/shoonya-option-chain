@@ -66,7 +66,6 @@ export const socket: NextWebSocketHandler = async (client, req) => {
 
       // Get initial stocks from DB
       for (const stockName of STOCKS_TO_INCLUDE) {
-        console.time(stockName);
         const { equityStock, optionsStocks } = await getInstrumentsToSubscribe(
           stockName,
           expiry
@@ -75,13 +74,10 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         // Get LTP to calculate lower bound and upper bound
         const response = await getQuotes('NSE', equityStock.token);
         const ltp = Number(response.lp);
-        console.log(`LTP for ${stockName} is`, ltp);
 
         const effectivePercent = CUSTOM_PERCENT[stockName] ?? percent;
         const lowerBound = ((100 - effectivePercent) * ltp) / 100;
         const upperBound = ((100 + effectivePercent) * ltp) / 100;
-        console.log('Lowerbound:', lowerBound);
-        console.log('Upperbound:', upperBound);
 
         // Compute filtered stocks to send the scoket client
         const { validTokens, initialInstruments } = await getValidInstruments(
@@ -90,10 +86,6 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           entryValue,
           lowerBound,
           upperBound
-        );
-        console.log(
-          `Initial instruments for ${stockName}: `,
-          initialInstruments.length
         );
 
         // Send client init data
@@ -112,7 +104,6 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         validTokens.forEach((t) =>
           tokenToLotSizeMap.set(t, optionsStocks[0].lotSize)
         );
-        console.timeEnd(stockName);
       }
 
       tempWs.close();
