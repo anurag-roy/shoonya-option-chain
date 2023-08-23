@@ -1,4 +1,5 @@
 import { AllInstrument, AllSocketData } from '@/types';
+import { playAlert } from '@/utils/alerts';
 import { memo, useEffect, useState } from 'react';
 import { AllTableRow } from './AllTableRow';
 import { OrderModal } from './OrderModal';
@@ -30,6 +31,7 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
             [...instruments, ...data.options].sort((a, b) => b.value - a.value)
           );
         } else if (action === 'option-update') {
+          playAlert('update');
           setInstruments((instruments) =>
             instruments
               .map((i) => {
@@ -46,6 +48,7 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
               .sort((a, b) => b.value - a.value)
           );
         } else if (action === 'option-remove') {
+          playAlert('remove');
           setInstruments((instruments) =>
             instruments.filter((i) => i.token !== data.token)
           );
