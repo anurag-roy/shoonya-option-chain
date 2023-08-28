@@ -26,9 +26,14 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
 
       ws.onmessage = (event) => {
         const { action, data } = JSON.parse(event.data) as AllSocketData;
-        if (action === 'init') {
+        if (action === 'option-init') {
           setInstruments((instruments) =>
-            [...instruments, ...data.options].sort((a, b) => b.value - a.value)
+            [...instruments, ...data].sort((a, b) => b.value - a.value)
+          );
+        } else if (action === 'option-add') {
+          playAlert('add');
+          setInstruments((instruments) =>
+            [...instruments, data].sort((a, b) => b.value - a.value)
           );
         } else if (action === 'option-update') {
           playAlert('update');

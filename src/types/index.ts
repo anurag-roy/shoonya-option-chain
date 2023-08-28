@@ -44,10 +44,12 @@ export type SocketData =
 
 export type AllSocketData =
   | {
-      action: 'init';
-      data: {
-        options: AllInstrument[];
-      };
+      action: 'option-init';
+      data: AllInstrument[];
+    }
+  | {
+      action: 'option-add';
+      data: AllInstrument;
     }
   | {
       action: 'option-update';

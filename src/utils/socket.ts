@@ -74,80 +74,82 @@ export const getNewTicker = async () =>
 export const getValidInstruments = async (
   ws: WebSocket,
   instruments: instrument[],
-  entryValue: number,
   lowerBound: number,
   upperBound: number
 ) =>
-  new Promise<{ validTokens: string[]; initialInstruments: AllInstrument[] }>(
-    (resolve) => {
-      let responseReceived = 0;
-      const initialInstruments: AllInstrument[] = [];
+  new Promise<AllInstrument[]>((resolve) => {
+    let responseReceived = 0;
+    const validInstruments: AllInstrument[] = [];
 
-      const filteredInstruments = instruments.filter(
-        (s) =>
-          (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
-          (s.strikePrice >= upperBound && s.optionType === 'CE')
+    const filteredInstruments = instruments.filter(
+      (s) =>
+        (s.strikePrice <= lowerBound && s.optionType === 'PE') ||
+        (s.strikePrice >= upperBound && s.optionType === 'CE')
+    );
+    const tokensToSubscribe = filteredInstruments
+      .map((s) => `NFO|${s.token}`)
+      .join('#');
+
+    // Timeout after 3 seconds, because sometimes Shoonya doesn't return an
+    // acknowledgement for all the tokens
+    const timeout = setTimeout(() => {
+      ws.send(
+        JSON.stringify({
+          t: 'u',
+          k: tokensToSubscribe,
+        })
       );
-      const validTokens: string[] = filteredInstruments.map((i) => i.token);
-      const tokensToSubscribe = filteredInstruments
-        .map((s) => `NFO|${s.token}`)
-        .join('#');
+      resolve(validInstruments);
+    }, 3000);
 
-      // Timeout after 3 secsonds, because sometimes Shoonya doesn't return an
-      // acknowledgement for all the tokens
-      const timeout = setTimeout(() => {
+    ws.onmessage = (messageEvent: MessageEvent) => {
+      const messageData = JSON.parse(
+        messageEvent.data as string
+      ) as TouchlineResponse;
+
+      if (messageData.t === 'tk' && 'oi' in messageData && messageData.bp1) {
+        const foundInstrument = instruments.find(
+          (i) => i.token === messageData.tk
+        )!;
+        const value =
+          (Number(messageData.bp1) - 0.05) * foundInstrument.lotSize;
+        validInstruments.push({
+          ...foundInstrument,
+          bid: Number(messageData.bp1),
+          value,
+        });
+      }
+
+      responseReceived++;
+      // If all responses received, resolve
+      if (responseReceived === filteredInstruments.length) {
         ws.send(
           JSON.stringify({
             t: 'u',
             k: tokensToSubscribe,
           })
         );
-        resolve({ validTokens, initialInstruments });
-      }, 3000);
+        clearTimeout(timeout);
+        resolve(validInstruments);
+      }
+    };
 
-      ws.onmessage = (messageEvent: MessageEvent) => {
-        const messageData = JSON.parse(
-          messageEvent.data as string
-        ) as TouchlineResponse;
+    ws.send(
+      JSON.stringify({
+        t: 't',
+        k: tokensToSubscribe,
+      })
+    );
+  });
 
-        if (messageData.t === 'tk') {
-          if (!('oi' in messageData)) {
-            const foundIndex = validTokens.findIndex(
-              (t) => t === messageData.tk
-            );
-            validTokens.splice(foundIndex, 1);
-          } else if (messageData.bp1) {
-            const foundInstrument = instruments.find(
-              (i) => i.token === messageData.tk
-            )!;
-            const value =
-              (Number(messageData.bp1) - 0.05) * foundInstrument.lotSize;
-            if (value > entryValue)
-              initialInstruments.push({
-                ...foundInstrument,
-                bid: Number(messageData.bp1),
-                value,
-              });
-          }
-          responseReceived++;
-          if (responseReceived === filteredInstruments.length) {
-            ws.send(
-              JSON.stringify({
-                t: 'u',
-                k: tokensToSubscribe,
-              })
-            );
-            clearTimeout(timeout);
-            resolve({ validTokens, initialInstruments });
-          }
-        }
-      };
-
-      ws.send(
-        JSON.stringify({
-          t: 't',
-          k: tokensToSubscribe,
-        })
-      );
-    }
-  );
+export const getActionOnTick = (
+  value: number,
+  oldValue: number,
+  newValue: number
+) => {
+  if (newValue >= value) {
+    return oldValue >= value ? 'option-update' : 'option-add';
+  } else {
+    return oldValue >= value ? 'option-remove' : null;
+  }
+};
