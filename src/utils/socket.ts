@@ -117,6 +117,7 @@ export const getValidInstruments = async (
           ...foundInstrument,
           bid: Number(messageData.bp1),
           value,
+          return: 0,
         });
       }
 

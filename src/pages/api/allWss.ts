@@ -9,6 +9,7 @@ import {
   getValidInstruments,
   subscribeToTokens,
 } from '@/utils/socket';
+import { getReturnValue } from '@/utils/ui';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';
 import { MessageEvent } from 'ws';
@@ -36,7 +37,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         if (!instrument) return;
 
         const value = (bid - 0.05) * instrument.lotSize;
-        const updatedInstrument = { ...instrument, value };
+        const updatedInstrument = { ...instrument, bid, value };
         tokenToInstrumentMap.set(data.tk, updatedInstrument);
 
         const action = getActionOnTick(entryValue, instrument.value, value);
@@ -102,11 +103,18 @@ export const socket: NextWebSocketHandler = async (client, req) => {
           upperBound
         );
 
+        const instrumentsToSend = validInstruments.filter(
+          (i) => i.value > entryValue
+        );
+        for (const i of instrumentsToSend) {
+          i.return = await getReturnValue(i);
+        }
+
         // Send client init data
         client.send(
           JSON.stringify({
             action: 'option-init',
-            data: validInstruments.filter((i) => i.value > entryValue),
+            data: instrumentsToSend,
           })
         );
         validInstruments.forEach((i) => tokenToInstrumentMap.set(i.token, i));
@@ -116,6 +124,9 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         );
       }
 
+      client.send(
+        JSON.stringify({ action: 'option-init-complete', data: null })
+      );
       tempWs.close();
     }
   }

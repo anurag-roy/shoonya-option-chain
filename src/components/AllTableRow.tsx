@@ -16,7 +16,7 @@ export const AllTableRow = ({ i, onClick }: Props) => {
         {i.symbol} {i.strikePrice} {i.optionType}
       </td>
       <td>{i.bid}</td>
-      <td>{i.value.toFixed(2)}</td>
+      <td>{i.return.toFixed(2)}</td>
     </tr>
   );
 };

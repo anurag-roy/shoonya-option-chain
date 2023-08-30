@@ -1,4 +1,6 @@
 import { EXPIRY_OPTION_LENGTH } from '@/config';
+import { AllInstrument } from '@/types';
+import { MarginResponse } from '@/types/shoonya';
 
 export const getKeys = <T extends Object>(object: T) =>
   Object.keys(object) as Array<keyof T>;
@@ -41,3 +43,24 @@ export const displayInr = (amount: number) =>
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   }).format(amount);
+
+export const getRandomIndex = (min: number, max: number) =>
+  Math.random() * (max - min) + min;
+
+export const getReturnValue = async (i: AllInstrument) => {
+  const { bid, lotSize, tradingSymbol } = i;
+
+  try {
+    const url = new URL('http://localhost:3000/api/getMargin');
+    url.searchParams.append('price', bid.toString());
+    url.searchParams.append('quantity', lotSize.toString());
+    url.searchParams.append('tradingSymbol', encodeURIComponent(tradingSymbol));
+
+    const res = await fetch(url);
+    const margin: MarginResponse = await res.json();
+    return ((bid - 0.05) * lotSize * 100) / Number(margin.ordermargin);
+  } catch (error) {
+    console.error('Could not get margin for', tradingSymbol, error);
+    return 0;
+  }
+};

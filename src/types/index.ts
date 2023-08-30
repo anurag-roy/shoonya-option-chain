@@ -10,6 +10,7 @@ export interface UiInstrument extends instrument {
 export interface AllInstrument extends instrument {
   bid: number;
   value: number;
+  return: number;
 }
 
 export type SocketData =
@@ -46,6 +47,10 @@ export type AllSocketData =
   | {
       action: 'option-init';
       data: AllInstrument[];
+    }
+  | {
+      action: 'option-init-complete';
+      data: null;
     }
   | {
       action: 'option-add';
