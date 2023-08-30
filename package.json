@@ -9,6 +9,7 @@
     "data:prepare": "rimraf src/data/data.db && tsx src/setupDb.ts"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^0.7.0",
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.17",
     "@next/font": "^13.1.6",

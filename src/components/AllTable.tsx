@@ -1,6 +1,7 @@
 import { AllInstrument, AllSocketData } from '@/types';
 import { playAlert } from '@/utils/alerts';
 import { classNames, getRandomIndex, getReturnValue } from '@/utils/ui';
+import autoAnimate from '@formkit/auto-animate';
 import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
@@ -37,6 +38,8 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
   const currentIndex = useRef(0);
   const randomMarginFetches = useRef<number[]>([]);
   const [activity, setActivity] = useState<Activity[]>([]);
+
+  const parent = useRef(null);
 
   const getReturn = async (instrument: AllInstrument) =>
     new Promise<number | undefined>((resolve) => {
@@ -235,6 +238,10 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    parent.current && autoAnimate(parent.current);
+  }, [parent]);
+
   return (
     <>
       <div className="mx-auto mt-8 max-h-[50vh] max-w-5xl resize-y overflow-y-auto rounded-lg bg-white ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700">
@@ -248,7 +255,10 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
               <th scope="col">Return Value</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200 overflow-y-auto bg-white text-zinc-900 dark:divide-white/10 dark:bg-zinc-900 dark:text-zinc-100">
+          <tbody
+            ref={parent}
+            className="divide-y divide-zinc-200 overflow-y-auto bg-white text-zinc-900 dark:divide-white/10 dark:bg-zinc-900 dark:text-zinc-100"
+          >
             {instruments?.length === 0 ? (
               <tr>
                 <td colSpan={3}>No data to display.</td>
