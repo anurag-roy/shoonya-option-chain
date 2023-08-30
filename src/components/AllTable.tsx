@@ -41,7 +41,6 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
     });
 
   const updateReturn = async () => {
-    console.log('Current index is', currentIndex.current);
     if (instrumentsRef.current.length > 200) {
       if (randomMarginFetches.current.length === 100) {
         randomMarginFetches.current = [];
@@ -62,13 +61,11 @@ export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
     }
 
     const instrument = instrumentsRef.current[currentIndex.current];
-    console.log('Current instrument is', instrument);
     if (!instrument) {
       currentIndex.current = 0;
       updateReturn();
     }
 
-    console.log('Fetching return value');
     getReturn(instrument)
       .then((ret) => {
         currentIndex.current++;

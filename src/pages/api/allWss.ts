@@ -9,7 +9,6 @@ import {
   getValidInstruments,
   subscribeToTokens,
 } from '@/utils/socket';
-import { getReturnValue } from '@/utils/ui';
 import { NextApiHandler } from 'next';
 import { NextWebSocketHandler } from 'next-plugin-websocket';
 import { MessageEvent } from 'ws';
@@ -73,15 +72,17 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         if (message) client.send(JSON.stringify(message));
       };
 
-      const tempWs = await getNewTicker();
-
       // Actions on socket client disconnecting
       client.on('close', () => {
         ws.close();
       });
 
+      const tempWs = await getNewTicker();
+
       // Get initial stocks from DB
+      console.log('Starting initialization...');
       for (const stockName of STOCKS_TO_INCLUDE) {
+        console.log(`Fetching data for ${stockName}...`);
         const { equityStock, optionsStocks } = await getInstrumentsToSubscribe(
           stockName,
           expiry
@@ -106,9 +107,12 @@ export const socket: NextWebSocketHandler = async (client, req) => {
         const instrumentsToSend = validInstruments.filter(
           (i) => i.value > entryValue
         );
-        for (const i of instrumentsToSend) {
-          i.return = await getReturnValue(i);
-        }
+        console.log(
+          `${instrumentsToSend.length} options satisfied entry condition`
+        );
+        // for (const i of instrumentsToSend) {
+        //   i.return = await getReturnValue(i);
+        // }
 
         // Send client init data
         client.send(
@@ -127,6 +131,7 @@ export const socket: NextWebSocketHandler = async (client, req) => {
       client.send(
         JSON.stringify({ action: 'option-init-complete', data: null })
       );
+      console.log('Initialization complete!');
       tempWs.close();
     }
   }
