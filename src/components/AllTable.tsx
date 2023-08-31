@@ -28,7 +28,7 @@ type Activity = {
 };
 
 export const AllTable = memo(({ expiry, percent, entryValue }: Props) => {
-  const FETCH_INTERVAL = 2000;
+  const FETCH_INTERVAL = 800;
 
   const [instruments, setInstruments] = useState<AllInstrument[]>([]);
   const instrumentsRef = useRef<AllInstrument[]>([]);
