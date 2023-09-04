@@ -86,7 +86,7 @@ export const STOCKS_TO_INCLUDE = [
   'ICICIBANK',
   'ICICIGI',
   'ICICIPRULI',
-  'IDEA',
+  // 'IDEA',
   'IDFC',
   'IDFCFIRSTB',
   'IEX',
