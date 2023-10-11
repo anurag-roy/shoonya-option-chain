@@ -19,6 +19,19 @@ Live Option Chain for Equity Derivatives using Finvasia (Shoonya) APIs and Next.
   - PE: Only Put options with strikes greater than the LTP
   - A percentage of options close to the LTP on both sides are ignored. See [`DIFF_PERCENT`](#configts)
 
+## Screenshots
+
+![initial-view](https://github.com/anurag-roy/shoonya-option-chain/assets/53750093/09fe5873-0975-4e76-9378-e100e0346651)
+
+![all-view](https://github.com/anurag-roy/shoonya-option-chain/assets/53750093/04690c1b-e274-41a6-a05f-29b6406b2d66)
+
+![group-view](https://github.com/anurag-roy/shoonya-option-chain/assets/53750093/ad5889ad-7e13-465c-a465-f014f858cafc)
+
+![order-with-cash](https://github.com/anurag-roy/shoonya-option-chain/assets/53750093/2881c25a-e390-448a-b07e-abd7fe2e84ed)
+
+![order-with-shortfall](https://github.com/anurag-roy/shoonya-option-chain/assets/53750093/a9bc7e05-bb79-49c0-a199-f5ecd7d10bce)
+
+
 ## Setup
 
 Install dependencies. (npm or yarn is recommended)[^1]
