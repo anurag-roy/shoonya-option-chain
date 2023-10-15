@@ -48,16 +48,9 @@ cp example.env.json env.json
 # Populate env.json secrets
 ```
 
-Start the app to login for the first time to get and cache your access token. We need to do that before fetching instrument data and setting up the database, because Kite requires you to be authenticated.
+Populate the SQLite DB with instrument data.
 
 ```sh
-npm run dev
-```
-
-Now you can close the server and setup your DB.
-
-```sh
-# After stopping the dev server
 npm run data:prepare
 ```
 
@@ -90,15 +83,9 @@ Edit `src/config.ts` to:
 - `EXPIRY_OPTION_LENGTH` - Expiry dropdown options
 - `DIFF_PERCENT` - Control the range of strikes to ignore (depending on the LTP of the equity instrument).
 
-## Scopes of improvement
-
-There are definitely some optimisations that can be made, but were not made because I did not experience any slowdown or lag so I don't see a good ROI for the effort it will take. But anyway, just jotting them down if I ever feel tackling on any one:
-
-- Move everything to UI from the server
-- On the frontend, granular update of each instrument object instead of the whole array.
-
 ## Related
 
+- [All Option Chain](https://github.com/anurag-roy/all-option-chain)
 - [Kite Option Chain](https://github.com/anurag-roy/kite-option-chain)
 - [5paisa Live Ticker](https://github.com/anurag-roy/5paisa-live-ticker)
 
