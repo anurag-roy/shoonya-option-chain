@@ -11,13 +11,14 @@ Live Option Chain for Equity Derivatives using Finvasia (Shoonya) APIs and Next.
 ## Features
 
 - Grouped stocks for easily monitoring relevant stocks
-- Connect from multiple tabs to monitor different groups of upto 3000 stocks (KiteTicker limit)
+- Connect from multiple tabs to monitor different groups of stocks
 - Vertically resizable and scrollable tables to adjust views when needed
 - Prices displayed - First Bid and First Ask for options and LTP for equities along with change from previous day's close
 - Options displayed
   - CE: Only Call options with strikes lesser than the LTP
   - PE: Only Put options with strikes greater than the LTP
   - A percentage of options close to the LTP on both sides are ignored. See [`DIFF_PERCENT`](#configts)
+- Place Sell orders directly from the UI
 
 ## Screenshots
 
